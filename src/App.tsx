@@ -1,49 +1,44 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
+import Keyboard from "./components/Keyboard";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const [number, setNumber] = useState(0);
+
+  const updateNumber = ( x:number ): void => setNumber(x);
 
   async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
+
   }
 
   return (
     <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div>
+        <h1> Welcom </h1>
+        <p> {number} </p>
       </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
 
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
+      <div className="flex flex-col items-center justify-center">
+        <div className="flex">
+          <Keyboard value={1} updateNumber={updateNumber(1)} />
+          <Keyboard value={2} updateNumber={updateNumber(2)} />
+          <Keyboard value={3} updateNumber={updateNumber(3)} />
+        </div>
+        <div className="flex">
+          <Keyboard value={4} updateNumber={updateNumber(4)} />
+          <Keyboard value={5} updateNumber={updateNumber(5)} />
+          <Keyboard value={6} updateNumber={updateNumber(6)} />
+        </div>
+        <div className="flex">
+          <Keyboard value={7} updateNumber={updateNumber(7)} />
+          <Keyboard value={8} updateNumber={updateNumber(8)} />
+          <Keyboard value={9} updateNumber={updateNumber(9)} />
+        </div>
+        <div>
+          <Keyboard value={0} updateNumber={updateNumber(0)} />
+        </div>
+      </div>
+
     </main>
   );
 }
