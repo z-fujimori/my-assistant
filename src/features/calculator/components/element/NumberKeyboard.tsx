@@ -9,7 +9,7 @@ const NumberKeyboard = (
     return (
         <>
             <button 
-                className="m-10 bg-cyan-500" 
+                className="mx-1 w-12 h-10 bg-mintGreen hover:bg-emerald-600"
                 onClick={() => props.updateNumber(props.value)}>
 
                 { props.value }
