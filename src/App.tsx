@@ -5,7 +5,7 @@ import CalcuCard from "./features/calculator/components/CalcuCard";
 function App() {
 
   return (
-      <div>
+      <div className="m-10">
         <h1> Welcome </h1>
 
         <CalcuCard />
