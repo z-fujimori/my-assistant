@@ -2,12 +2,14 @@ import { useState } from 'react';
 import NumberKeyboard from './element/NumberKeyboard';
 import SymbolKeyboard from './element/SymbolKeyboard';
 import ResetKeyboard from './element/ResetKeyboard';
+import MemoryNumber from './element/MemoryNumber';
 
 const CalcuCard = () => {
 
     const [number, setNumber] = useState(0);
     const [holdNumber, setHoldNumber] = useState(0);
     const [symbol, setSymbol] = useState('');
+    const [memorys, setMemory] = useState([0,0]);
     function updateNumber (x:number) {
         setNumber(number*10 + x);
     }
@@ -69,34 +71,58 @@ const CalcuCard = () => {
         console.log("計算終了",number);
         return anser;
     }
+    function num_mem_switch(index:number) {
+        let mem = memorys[index];
+        setMemory(
+            memorys.map((memory, i) => {
+                if(i===index){
+                    return number;
+                }else{
+                    return memory;
+                }})
+        );
+        setNumber(mem);
+    }
 
 
     return (
-        <div className="flex flex-col items-center justify-center">
-            <div >
-                <p>hold: {holdNumber}  sym:{symbol}</p>
-                <p className='text-lg'> {number} </p>
+        <div className="flex flex-col items-center justify-center w-full">
+            <div className='flex flex-row w-full justify-center'>
+                <div className='w-1/4 flex flex-col items-center '>
+                    <MemoryNumber mem={memorys[0]} func={() => num_mem_switch(0)} />
+                    <MemoryNumber mem={memorys[1]} func={() => num_mem_switch(1)} />
+                </div>
+                <div className='w-1/4'>
+                    <div >
+                        <p> {holdNumber}   {symbol}</p>
+                        <p className='text-2xl font-bold text-right'> {number} </p>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center">
+                        <div className="flex my-1">
+                            <NumberKeyboard value={1} updateNumber={updateNumber} />
+                            <NumberKeyboard value={2} updateNumber={updateNumber} />
+                            <NumberKeyboard value={3} updateNumber={updateNumber} />
+                        </div>
+                        <div className="flex my-1">
+                            <NumberKeyboard value={4} updateNumber={updateNumber} />
+                            <NumberKeyboard value={5} updateNumber={updateNumber} />
+                            <NumberKeyboard value={6} updateNumber={updateNumber} />
+                        </div>
+                        <div className="flex my-1">
+                            <NumberKeyboard value={7} updateNumber={updateNumber} />
+                            <NumberKeyboard value={8} updateNumber={updateNumber} />
+                            <NumberKeyboard value={9} updateNumber={updateNumber} />
+                        </div>
+                        <div className="my-1">
+                            <NumberKeyboard value={0} updateNumber={updateNumber} />
+                        </div>
+                    </div>
+                </div>
+                <div className='w-1/6'></div>
             </div>
 
-            <div className="flex flex-col items-center justify-center">
-                <div className="flex my-1">
-                    <NumberKeyboard value={1} updateNumber={updateNumber} />
-                    <NumberKeyboard value={2} updateNumber={updateNumber} />
-                    <NumberKeyboard value={3} updateNumber={updateNumber} />
-                </div>
-                <div className="flex my-1">
-                    <NumberKeyboard value={4} updateNumber={updateNumber} />
-                    <NumberKeyboard value={5} updateNumber={updateNumber} />
-                    <NumberKeyboard value={6} updateNumber={updateNumber} />
-                </div>
-                <div className="flex my-1">
-                    <NumberKeyboard value={7} updateNumber={updateNumber} />
-                    <NumberKeyboard value={8} updateNumber={updateNumber} />
-                    <NumberKeyboard value={9} updateNumber={updateNumber} />
-                </div>
-                <div className="my-1">
-                    <NumberKeyboard value={0} updateNumber={updateNumber} />
-                </div>
+
                 <div className="my-1">
                     <ResetKeyboard value="＊" function={resetNumber} />
                     <SymbolKeyboard value='+' function={calcuFunction} equal={equal}/>
@@ -107,7 +133,6 @@ const CalcuCard = () => {
                     <SymbolKeyboard value='^' function={calcuFunction} equal={equal}/>
                     <ResetKeyboard value="＝" function={equal} />
                 </div>
-            </div>
 
             <div className='flex'>
                 <div className='bg-dark p-5'></div>

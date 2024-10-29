@@ -6,8 +6,6 @@ function App() {
 
   return (
       <div className="m-10">
-        <h1> Welcome </h1>
-
         <CalcuCard />
       </div>
   );

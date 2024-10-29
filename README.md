@@ -8,5 +8,6 @@ This template should help get you started developing with Tauri, React and Types
 
 ## 今後実装したいこと
 - あまりつき割り算
+- メモリ導入
 - 積み重ねタイマ-
 
