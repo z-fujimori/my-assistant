@@ -9,7 +9,7 @@ const CalcuCard = () => {
     const [number, setNumber] = useState(0);
     const [holdNumber, setHoldNumber] = useState(0);
     const [symbol, setSymbol] = useState('');
-    const [memorys, setMemory] = useState([0,0]);
+    const [memorys, setMemory] = useState([0,0,0]);
     function updateNumber (x:number) {
         setNumber(number*10 + x);
     }
@@ -22,8 +22,9 @@ const CalcuCard = () => {
         let eqNum = 0;
         if (holdNumber!=0 && symbol!='' && number!=0){
             eqNum = equal();
-            console.log("eq:",eqNum);
             setHoldNumber(eqNum);
+            setSymbol(sym);
+            setNumber(0);
         }
         else if(holdNumber!=0 && symbol!='' && number===0){
             setSymbol(sym);
@@ -83,18 +84,26 @@ const CalcuCard = () => {
         );
         setNumber(mem);
     }
+    function calcuFuncReset (){
+        setNumber(holdNumber);
+        setHoldNumber(0);
+        setSymbol('');
+    }
+    function resetOnlyNumber(){
+        setNumber(0);
+    }
 
 
     return (
         <div className="flex flex-col items-center justify-center w-full">
             <div className='flex flex-row w-full justify-center'>
                 <div className='w-1/4 flex flex-col items-center '>
-                    <MemoryNumber mem={memorys[0]} func={() => num_mem_switch(0)} />
                     <MemoryNumber mem={memorys[1]} func={() => num_mem_switch(1)} />
+                    <MemoryNumber mem={memorys[2]} func={() => num_mem_switch(2)} />
                 </div>
                 <div className='w-1/4'>
                     <div >
-                        <p> {holdNumber}   {symbol}</p>
+                        <p onClick={calcuFuncReset}> {holdNumber}   {symbol}</p>
                         <p className='text-2xl font-bold text-right'> {number} </p>
                     </div>
 
@@ -119,7 +128,9 @@ const CalcuCard = () => {
                         </div>
                     </div>
                 </div>
-                <div className='w-1/6'></div>
+                <div className='w-1/6'>
+                    <button onClick={resetOnlyNumber}>x</button>
+                </div>
             </div>
 
 
