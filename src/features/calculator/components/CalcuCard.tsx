@@ -62,6 +62,9 @@ const CalcuCard = () => {
                 anser = (holdNumber ** number);
                 break;
             }
+            case '': {
+                return number;
+            }
             default : {
                 console.log("規定外の演算子");
             }
@@ -128,7 +131,9 @@ const CalcuCard = () => {
                         </div>
                     </div>
                 </div>
-                <div className='w-1/6'>
+                <div className='w-1/12'>
+                </div>
+                <div className='text-red-700 '>
                     <button onClick={resetOnlyNumber}>x</button>
                 </div>
             </div>
