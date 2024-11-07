@@ -2,11 +2,12 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
-type Time = {
-    id: number,
+type InputTime = {
+    // id: number,
     title: string,
-    start_time: number,
-    end_time: number
+    start_time: string,
+    end_time: string,
+    second: number
     // start_time: Date,
     // end_time: Date
 }
@@ -15,8 +16,10 @@ const TimememoCard = () => {
     const [seconds, setSeconds] = useState(0);
     const [isActive, setIsActive] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
+    const [start_t, setStart] = useState<string>("");
+    // const [end_t, setEnd] = useState<string>("");
     useEffect(() => {
-        let intervalId: any; // わからなかったので、、、
+        let intervalId: number;
         if (isActive && !isPaused) {
             intervalId = setInterval(() => {
                 setSeconds((prevSeconds) => prevSeconds + 1);
@@ -34,6 +37,7 @@ const TimememoCard = () => {
         )}`;
     };
     const startTimer = () => {
+        setStart( new Date().toLocaleTimeString() );
         setIsActive(true);
         setIsPaused(false);
     };
@@ -46,17 +50,22 @@ const TimememoCard = () => {
     };
 
     const stopTimer = () => {
+        const end_t = new Date().toLocaleTimeString();
+
+        postTime(start_t, end_t, seconds)
+        setStart("");
+        
         setIsActive(false);
-        alert(`お疲れ様でした！ 時間： ${seconds} seconds`);
+        // alert(`お疲れ様でした！ 時間： ${seconds} seconds`);
         setSeconds(0);
     };
 
-    const postTime = async () => {
-        let data: Time = {
-            id:2,
+    const postTime = async (start:string, end:string, time: number) => {
+        let data: InputTime = {
             title:"test",
-            start_time: 23,
-            end_time: 55
+            start_time: start,
+            end_time: end,
+            second: time
         }
         await invoke<void>("handle_add_time", {"time": data})
     };
@@ -99,7 +108,7 @@ const TimememoCard = () => {
                             <button
                                 onClick={() => {
                                     stopTimer();
-                                    postTime();
+                                    // postTime();
                                 }}
                                 className="hover:bg-[#08051d] hover:duration-300 rounded-md bg-[#1a1157] md:w-[120px] w-[80px] md:p-5 p-2 mt-5"
                             >

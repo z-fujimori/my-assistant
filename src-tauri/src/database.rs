@@ -4,7 +4,7 @@ use sqlx::{
     sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions, SqliteSynchronous}, Row, Sqlite, SqlitePool, Transaction 
 };
 
-use crate::Time;
+use crate::InputTime;
 
 /// このモジュール内の関数の戻り値型
 type DbResult<T> = Result<T, Box<dyn std::error::Error>>;
@@ -45,24 +45,26 @@ pub(crate) async fn show_tables(pool: &SqlitePool) -> DbResult<()> {
         for row in rows {
             let id: i64 = row.get("id");
             let title: String = row.get("title");
-            let start_time: i64 = row.get("start_time");
-            let end_time: i64 = row.get("end_time");
-    
-            println!("id: {}, title: {}, start_time: {}, end_time: {}", id, title, start_time, end_time);
+            let start_time: String = row.get("start_time");
+            let end_time: String = row.get("end_time");
+            let second: i64 = row.get("second");
+
+            println!("id: {}, title: {}, start_time: {}, end_time: {}, second: {}", id, title, start_time, end_time, second);
         }
 
         Ok(())
 }
 
-pub(crate) async fn insert_time(pool: &SqlitePool, time: Time) -> DbResult<()> {
+pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime) -> DbResult<()> {
     // トランザクションを開始する
     let mut tx = pool.begin().await?;
     // テーブルに挿入
-    sqlx::query("INSERT INTO times (id, title, start_time, end_time) VALUES (?, ?, ?, ?)")
-        .bind(time.id)
+    sqlx::query("INSERT INTO times (title, start_time, end_time, second) VALUES (?, ?, ?, ?)")
+        // .bind(time.id)
         .bind(time.title)
         .bind(time.start_time)
         .bind(time.end_time)
+        .bind(time.second)
         .execute(pool)
         .await?;
 

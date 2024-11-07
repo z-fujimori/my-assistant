@@ -6,17 +6,18 @@ use tauri::{Manager, State};
 pub(crate) mod database;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Time{
-    id: i64,
+pub struct InputTime{
+    // id: i64,
     title: String,
-    start_time: i64,
-    end_time: i64
+    start_time: String,
+    end_time: String,
+    second: i64
 }
 
 #[tauri::command]
 async fn handle_add_time (
     sqlite_pool: State<'_, sqlx::SqlitePool>,
-    time: Time
+    time: InputTime
 ) -> Result<(), String> {
 
     database::insert_time(&*sqlite_pool, time)
