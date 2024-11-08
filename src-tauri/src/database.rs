@@ -44,12 +44,11 @@ pub(crate) async fn show_tables(pool: &SqlitePool) -> DbResult<()> {
 
         for row in rows {
             let id: i64 = row.get("id");
-            let title: String = row.get("title");
+            let title_id: i64 = row.get("title_id");
             let start_time: String = row.get("start_time");
             let end_time: String = row.get("end_time");
-            let second: i64 = row.get("second");
 
-            println!("id: {}, title: {}, start_time: {}, end_time: {}, second: {}", id, title, start_time, end_time, second);
+            println!("id: {}, title_id: {}, start_time: {}, end_time: {}", id, title_id, start_time, end_time);
         }
 
         Ok(())
@@ -59,12 +58,11 @@ pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime) -> DbResult<
     // トランザクションを開始する
     let mut tx = pool.begin().await?;
     // テーブルに挿入
-    sqlx::query("INSERT INTO times (title, start_time, end_time, second) VALUES (?, ?, ?, ?)")
+    sqlx::query("INSERT INTO times (title_id, start_time, end_time) VALUES (?, ?, ?)")
         // .bind(time.id)
-        .bind(time.title)
+        .bind(time.title_id)
         .bind(time.start_time)
         .bind(time.end_time)
-        .bind(time.second)
         .execute(pool)
         .await?;
 

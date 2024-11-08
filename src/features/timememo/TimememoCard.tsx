@@ -4,12 +4,9 @@ import { invoke } from "@tauri-apps/api/core";
 
 type InputTime = {
     // id: number,
-    title: string,
+    title_id: number,
     start_time: string,
-    end_time: string,
-    second: number
-    // start_time: Date,
-    // end_time: Date
+    end_time: string
 }
 
 const TimememoCard = () => {
@@ -21,9 +18,9 @@ const TimememoCard = () => {
     useEffect(() => {
         let intervalId: number;
         if (isActive && !isPaused) {
-            intervalId = setInterval(() => {
-                setSeconds((prevSeconds) => prevSeconds + 1);
-            }, 1000);
+        intervalId = setInterval(() => {
+            setSeconds((prevSeconds) => prevSeconds + 1);
+        }, 1000);
         }
         return () => clearInterval(intervalId);
     }, [isActive, isPaused]);
@@ -37,35 +34,40 @@ const TimememoCard = () => {
         )}`;
     };
     const startTimer = () => {
-        setStart( new Date().toLocaleTimeString() );
+        setStart( new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) );
         setIsActive(true);
         setIsPaused(false);
     };
     const pauseTimer = () => {
+        const end_t = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
+        postTime(start_t, end_t);
+        setStart("");
+
         setIsPaused(true);
     };
 
-    const resumeTimer = () => {
+    const restartTimer = () => {
+        setStart(new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }));
         setIsPaused(false);
     };
 
     const stopTimer = () => {
-        const end_t = new Date().toLocaleTimeString();
-
-        postTime(start_t, end_t, seconds)
-        setStart("");
+        if (!isPaused) {
+            const end_t = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
+            postTime(start_t, end_t)
+            setStart("");
+        }
         
         setIsActive(false);
         // alert(`お疲れ様でした！ 時間： ${seconds} seconds`);
         setSeconds(0);
     };
 
-    const postTime = async (start:string, end:string, time: number) => {
+    const postTime = async (start:string, end:string) => {
         let data: InputTime = {
-            title:"test",
+            title_id: 0,
             start_time: start,
-            end_time: end,
-            second: time
+            end_time: end
         }
         await invoke<void>("handle_add_time", {"time": data})
     };
@@ -98,7 +100,7 @@ const TimememoCard = () => {
                         )}
                         {isPaused && (
                             <button
-                                onClick={resumeTimer}
+                                onClick={restartTimer}
                                 className="hover:opacity-80 hover:duration-300 rounded-md bg-[#333333] md:w-[120px] w-[80px] md:p-5 p-2 mt-5"
                             >
                                 ReStart

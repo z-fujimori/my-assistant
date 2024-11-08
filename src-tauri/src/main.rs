@@ -8,10 +8,9 @@ pub(crate) mod database;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct InputTime{
     // id: i64,
-    title: String,
+    title_id: i64,
     start_time: String,
-    end_time: String,
-    second: i64
+    end_time: String
 }
 
 #[tauri::command]
