@@ -1,10 +1,11 @@
-use std::{str::FromStr};
+use std::{collections::BTreeMap, str::FromStr};
 
+use futures::TryStreamExt;
 use sqlx::{
     sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions, SqliteSynchronous}, Row, Sqlite, SqlitePool, Transaction 
 };
 
-use crate::InputTime;
+use crate::{GetTitle, InputTime};
 
 /// このモジュール内の関数の戻り値型
 type DbResult<T> = Result<T, Box<dyn std::error::Error>>;
@@ -52,6 +53,20 @@ pub(crate) async fn show_tables(pool: &SqlitePool) -> DbResult<()> {
         }
 
         Ok(())
+}
+
+pub(crate) async  fn get_titles(pool: &SqlitePool) -> DbResult<Vec<GetTitle>> {
+    const SQL: &str = "SELECT * FROM titles ORDER BY id ASC";
+    let mut rows = sqlx::query(SQL).fetch(pool);
+    
+    let mut titles = BTreeMap::new();
+    while let Some(row) = rows.try_next().await? {
+        let id: i64 = row.try_get("id")?;
+        let title: &str = row.try_get("title")?;
+        titles.insert(id, GetTitle::new(id, title));
+    }
+
+    Ok(titles.into_iter().map(|(_k, v)| v).collect())
 }
 
 pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime) -> DbResult<()> {

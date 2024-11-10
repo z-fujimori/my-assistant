@@ -12,13 +12,36 @@ pub struct InputTime{
     start_time: String,
     end_time: String
 }
+#[derive(Debug, Serialize, Deserialize)]
+pub struct  GetTitle{
+    id: i64,
+    title: String,
+}
+impl GetTitle {
+    pub fn new(id: i64, title: &str) -> Self {
+        GetTitle { 
+            id: id, 
+            title: title.to_string(), 
+        }
+    }
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Titles{
+    titles: Vec<GetTitle>,
+}
 
+#[tauri::command]
+async fn get_titles(sqlite_pool: State<'_, sqlx::SqlitePool>) -> Result<Titles, String> {
+    let titles = database::get_titles(&sqlite_pool)
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(Titles { titles })
+}
 #[tauri::command]
 async fn handle_add_time (
     sqlite_pool: State<'_, sqlx::SqlitePool>,
     time: InputTime
 ) -> Result<(), String> {
-
     database::insert_time(&*sqlite_pool, time)
         .await
         .map_err(|e| e.to_string())?;
@@ -90,6 +113,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             handle_add_time,
+            get_titles,
         ])
         // ハンドラからコネクションプールにアクセスできるよう、登録する
         .setup(|app| {
