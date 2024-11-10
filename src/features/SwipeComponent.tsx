@@ -1,80 +1,80 @@
 import React, { useEffect, useState } from 'react';
 
 const SwipeComponent: React.FC = () => {
-    const [rotation, setRotation] = useState(0);
-    const [scale, setScale] = useState(1);
-    const [posX, setPosX] = useState(0);
-    const [posY, setPosY] = useState(0);
-    const [gestureStartRotation, setGestureStartRotation] = useState(0);
-    const [gestureStartScale, setGestureStartScale] = useState(0);
-    const [startX, setStartX] = useState(0);
-    const [startY, setStartY] = useState(0);
+    // const [posX, setPosX] = useState(0);
+    // const [posY, setPosY] = useState(0);
+    // const [startX, setStartX] = useState(0);
+    // const [startY, setStartY] = useState(0);
 
-    useEffect(() => {
-        console.log("effect");
-        const node = document.querySelector('.frame');
+    // const MOVE_SPEED = 0.2;
+    // const MAX_POS_X = 150; // 最大のX位置
 
-        const render = () => {
-            const transformValue = `translate3D(${posX}px, ${posY}px, 0px) rotate(${rotation}deg) scale(${scale})`;
-            if (node) {
-                // node.style.transform = transformValue;
-            }
-            console.log(transformValue);
-        };
+    // function resetSwipe () {
+    //     setPosX(0);
+    //     setPosY(0);
+    //     setStartX(0);
+    //     setStartY(0);
+    // }
 
-        // Handle wheel events for scaling and translating
-        const handleWheel = (e) => {
-            e.preventDefault();
-            if (e.ctrlKey) {
-            setScale((prevScale) => prevScale - e.deltaY * 0.01);
-            } else {
-            setPosX((prevPosX) => prevPosX - e.deltaX * 2);
-            setPosY((prevPosY) => prevPosY - e.deltaY * 2);
-            }
-            render();
-        };
-    
-        // Handle gesturestart event
-        const handleGestureStart = (e) => {
-            e.preventDefault();
-            setStartX(e.pageX - posX);
-            setStartY(e.pageY - posY);
-            setGestureStartRotation(rotation);
-            setGestureStartScale(scale);
-        };
-    
-        // Handle gesturechange event
-        const handleGestureChange = (e) => {
-            e.preventDefault();
-            setRotation(gestureStartRotation + e.rotation);
-            setScale(gestureStartScale * e.scale);
-            setPosX(e.pageX - startX);
-            setPosY(e.pageY - startY);
-            render();
-        };
-    
-        // Handle gestureend event
-        const handleGestureEnd = (e) => {
-            e.preventDefault();
-        };
-    
-        // Add event listeners
-        window.addEventListener('wheel', handleWheel);
-        window.addEventListener('gesturestart', handleGestureStart);
-        window.addEventListener('gesturechange', handleGestureChange);
-        window.addEventListener('gestureend', handleGestureEnd);
+    // useEffect(() => {
+    //     console.log("effect");
+    //     if (Math.abs(posX) > 149) {
+    //         console.log("オーバー１５０",posX);
+    //         resetSwipe();
+    //     }
+    //     const node = document.querySelector('.frame');
 
-        // Cleanup on unmount
-        return () => {
-            window.removeEventListener('wheel', handleWheel);
-            window.removeEventListener('gesturestart', handleGestureStart);
-            window.removeEventListener('gesturechange', handleGestureChange);
-            window.removeEventListener('gestureend', handleGestureEnd);
-        };
-    }, [rotation, scale, posX, posY, gestureStartRotation, gestureStartScale, startX, startY]);
+    //     const render = () => {
+    //         const transformValue = `translate3D(${posX}px, ${posY}px, 0px)`;
+    //         if (node) {
+    //             // node.style.transform = transformValue;
+    //         }
+    //         console.log(transformValue);
+    //     };
+
+    //     // Handle wheel events for scaling and translating
+    //     const handleWheel = (e) => {
+    //         e.preventDefault();
+    //         setPosX((prevPosX) => {
+    //             const newPosX = prevPosX - e.deltaX * MOVE_SPEED;
+    //             // posX が MAX_POS_X を超えないように制限
+    //             return Math.min(newPosX, MAX_POS_X);
+    //         });
+    //         render();
+    //     };
+    
+    //     // Handle gesturestart event
+    //     const handleGestureStart = (e) => {
+    //         e.preventDefault();
+    //         setStartX(e.pageX - posX);
+    //     };
+    
+    //     // Handle gesturechange event
+    //     const handleGestureChange = (e) => {
+    //         e.preventDefault();
+    //         setPosX((prevPosX) => {
+    //             const newPosX = e.pageX - startX;
+    //             // posX が MAX_POS_X を超えないように制限
+    //             return Math.min(newPosX, MAX_POS_X);
+    //         });
+    //         render();
+    //     };
+    
+    //     // Add event listeners
+    //     window.addEventListener('wheel', handleWheel);
+    //     window.addEventListener('gesturestart', handleGestureStart);
+    //     window.addEventListener('gesturechange', handleGestureChange);
+
+    //     // Cleanup on unmount
+    //     return () => {
+    //         window.removeEventListener('wheel', handleWheel);
+    //         window.removeEventListener('gesturestart', handleGestureStart);
+    //         window.removeEventListener('gesturechange', handleGestureChange);
+    //     };
+    // }, [posX, startX]);
 
     return (
-        <div className="frame" onTouchEnd={()=>console.log("タッチ")}>
+        <div className="frame" >
             <h1>Gesture & Wheel Event</h1>
         </div>
     );

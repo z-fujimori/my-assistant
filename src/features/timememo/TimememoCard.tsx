@@ -94,7 +94,7 @@ const TimememoCard = () => {
     };
 
     return (
-        <>
+        <div className="frame">
             <div>
                 {titles ? (
                     titles.titles.map((title) => (
@@ -152,7 +152,7 @@ const TimememoCard = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
 
     )
 }

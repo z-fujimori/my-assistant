@@ -98,7 +98,7 @@ const CalcuCard = () => {
 
 
     return (
-        <div className="flex flex-col items-center justify-center w-full">
+        <div className="flex flex-col items-center justify-center w-full frame">
             <div className='flex flex-row w-full justify-center'>
                 <div className='w-1/4 flex flex-col items-center '>
                     <MemoryNumber mem={memorys[1]} func={() => num_mem_switch(1)} />
