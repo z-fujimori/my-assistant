@@ -8,6 +8,13 @@ type InputTime = {
     start_time: string,
     end_time: string
 }
+type Title = {
+    id: number;
+    title: string;
+}
+type Titles = {
+    titles: [Title];
+}
 
 const TimememoCard = () => {
     const [seconds, setSeconds] = useState(0);
@@ -15,6 +22,20 @@ const TimememoCard = () => {
     const [isPaused, setIsPaused] = useState(false);
     const [start_t, setStart] = useState<string>("");
     // const [end_t, setEnd] = useState<string>("");
+    const [titles, setTitles] = useState<Titles | null>(null);
+
+    useEffect(() => {
+        // 即時実行関数でuseEffect内で非同期実装
+        (async () => {
+            const titles = await invoke<Titles>("get_titles", {})
+            .catch(err => {
+                console.error(err)
+                return null
+            });
+            setTitles(titles)
+        })();
+    }, [])
+
     useEffect(() => {
         let intervalId: number;
         if (isActive && !isPaused) {
@@ -74,6 +95,17 @@ const TimememoCard = () => {
 
     return (
         <>
+            <div>
+                {titles ? (
+                    titles.titles.map((title) => (
+                        <div key={title.id}>
+                            {title.title}
+                        </div>
+                    ))
+                ) : (
+                    <p>データを読み込み中です...</p>
+                )}
+            </div>
             <div className="absolute mt-5 w-[85%] m-auto right-0 left-0 flex flex-row-reverse flex-wrap md:flex-nowrap justify-between items-start">
                 <div className="md:w-[68%] w-full lg:ml-10 md:ml-5 ml-0">
                     <p className="leading-tight md:mt-0 mt-[-20px] xl:text-[260px] lg:text-[200px] md:text-[140px] text-[100px]  m-auto h-fit md:w-0 md:m-0 text-gray-300">
