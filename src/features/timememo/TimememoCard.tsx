@@ -1,6 +1,7 @@
 // import React from 'react'
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import AddTitleModal from "./AddTitleModal";
 
 type InputTime = {
     // id: number,
@@ -23,6 +24,15 @@ const TimememoCard = () => {
     const [start_t, setStart] = useState<string>("");
     // const [end_t, setEnd] = useState<string>("");
     const [titles, setTitles] = useState<Titles | null>(null);
+    // modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+    // title
+    const [titleId, setTitleId] = useState<string>('');
+    const titleChange = (e:  React.ChangeEvent<HTMLSelectElement>) => {
+        setTitleId(e.target.value);
+    }
 
     useEffect(() => {
         // 即時実行関数でuseEffect内で非同期実装
@@ -61,7 +71,7 @@ const TimememoCard = () => {
     };
     const pauseTimer = () => {
         const end_t = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
-        postTime(start_t, end_t);
+        postTime(start_t, end_t, titleId);
         setStart("");
 
         setIsPaused(true);
@@ -75,7 +85,7 @@ const TimememoCard = () => {
     const stopTimer = () => {
         if (!isPaused) {
             const end_t = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
-            postTime(start_t, end_t)
+            postTime(start_t, end_t, titleId)
             setStart("");
         }
         
@@ -84,9 +94,9 @@ const TimememoCard = () => {
         setSeconds(0);
     };
 
-    const postTime = async (start:string, end:string) => {
+    const postTime = async (start:string, end:string, title_id: string) => {
         let data: InputTime = {
-            title_id: 0,
+            title_id: Number(title_id),
             start_time: start,
             end_time: end
         }
@@ -95,16 +105,26 @@ const TimememoCard = () => {
 
     return (
         <div className="frame">
-            <div>
-                {titles ? (
-                    titles.titles.map((title) => (
-                        <div key={title.id}>
-                            {title.title}
-                        </div>
-                    ))
-                ) : (
-                    <p>データを読み込み中です...</p>
-                )}
+            <div className="flex">
+                <select name="" id=""
+                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 "
+                    onChange={titleChange}
+                >
+                    {titles ? (
+                        titles.titles.map((title) => (
+                            <option key={title.id} value={title.id}>
+                                {title.title}
+                            </option>
+                        ))
+                    ) : (
+                        <option>データを読み込み中です...</option>
+                    )}
+                </select>
+                <button className="mx-3 px-3 py-1 border-gray-600 text-white rounded-md focus:outline-none hover:bg-gray-700"
+                    onClick={openModal}
+                >
+                    +
+                </button>
             </div>
             <div className="absolute mt-5 w-[85%] m-auto right-0 left-0 flex flex-row-reverse flex-wrap md:flex-nowrap justify-between items-start">
                 <div className="md:w-[68%] w-full lg:ml-10 md:ml-5 ml-0">
@@ -152,6 +172,7 @@ const TimememoCard = () => {
                     </div>
                 </div>
             </div>
+            {isModalOpen && <AddTitleModal closeModal={closeModal} />}
         </div>
 
     )

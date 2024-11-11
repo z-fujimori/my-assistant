@@ -5,7 +5,7 @@ use sqlx::{
     sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions, SqliteSynchronous}, Row, Sqlite, SqlitePool, Transaction 
 };
 
-use crate::{GetTitle, InputTime};
+use crate::{GetTitle, InputTime, InputTitle};
 
 /// このモジュール内の関数の戻り値型
 type DbResult<T> = Result<T, Box<dyn std::error::Error>>;
@@ -67,6 +67,19 @@ pub(crate) async  fn get_titles(pool: &SqlitePool) -> DbResult<Vec<GetTitle>> {
     }
 
     Ok(titles.into_iter().map(|(_k, v)| v).collect())
+}
+
+pub(crate) async fn insert_title(pool: &SqlitePool, title: InputTitle) -> DbResult<()> {
+    // トランザクションを開始する
+    let mut tx = pool.begin().await?;
+    // 挿入
+    sqlx::query("INSERT INTO titles (title) VALUES (?)")
+        .bind(title.title)
+        .execute(&mut *tx)
+        .await?;
+    // トランザクションをコミット
+    tx.commit().await?;
+    Ok(())
 }
 
 pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime) -> DbResult<()> {
