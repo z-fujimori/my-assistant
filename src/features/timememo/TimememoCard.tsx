@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import AddTitleModal from "./AddTitleModal";
+import { TimeHist } from "./components/TimeHist";
 
 type InputTime = {
     // id: number,
@@ -9,12 +10,22 @@ type InputTime = {
     start_time: string,
     end_time: string
 }
+export type GetTime = {
+    id: number,
+    title_id: number,
+    title: string,
+    start_time: string,
+    end_time: string
+}
+export type Times = {
+    times: [GetTime]
+}
 type Title = {
     id: number;
     title: string;
 }
 type Titles = {
-    titles: [Title];
+    titles: [Title]
 }
 
 const TimememoCard = () => {
@@ -24,6 +35,7 @@ const TimememoCard = () => {
     const [start_t, setStart] = useState<string>("");
     // const [end_t, setEnd] = useState<string>("");
     const [titles, setTitles] = useState<Titles | null>(null);
+    const [stateAddTitle, setStateAddTitle] = useState(false);
     // modal
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);
@@ -33,6 +45,7 @@ const TimememoCard = () => {
     const titleChange = (e:  React.ChangeEvent<HTMLSelectElement>) => {
         setTitleId(e.target.value);
     }
+    const [timeHist, setTimeHist] = useState<Times|null>(null);
 
     useEffect(() => {
         // 即時実行関数でuseEffect内で非同期実装
@@ -42,9 +55,11 @@ const TimememoCard = () => {
                 console.error(err)
                 return null
             });
-            setTitles(titles)
+            setTitles(titles);
+            setStateAddTitle(false);
+            console.log("title effect");
         })();
-    }, [])
+    }, [stateAddTitle])
 
     useEffect(() => {
         let intervalId: number;
@@ -104,7 +119,8 @@ const TimememoCard = () => {
     };
 
     return (
-        <div className="frame">
+        <div className="">
+            <div className="frame"></div>
             <div className="flex">
                 <select name="" id=""
                     className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 "
@@ -171,8 +187,9 @@ const TimememoCard = () => {
                         )}
                     </div>
                 </div>
+                <TimeHist timeHist={timeHist} setTimeHist={setTimeHist} />
             </div>
-            {isModalOpen && <AddTitleModal closeModal={closeModal} />}
+            {isModalOpen && <AddTitleModal closeModal={closeModal} setStateAddTitle={setStateAddTitle} />}
         </div>
 
     )
