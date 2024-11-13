@@ -15,3 +15,6 @@ This template should help get you started developing with Tauri, React and Types
 - タイトルにメモをつける、今後これしたいとか、、、（今のこれ的な）
 - title作成, カテゴリ作成
 - DB移行
+### 全体
+- スライドにリセットをかけて無限に動かないようにする
+- 

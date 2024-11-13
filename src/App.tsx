@@ -60,13 +60,9 @@ function App () {
         setCurrentPage(navigation.time);
         move_right_page();
       }
-      const node = document.querySelector('.frame');
-
+      
       const render = () => {
           const transformValue = `translate3D(${posX}px)`;
-          if (node) {
-              // node.style.transform = transformValue;
-          }
           console.log(transformValue);
       };
 
@@ -90,7 +86,7 @@ function App () {
       // Handle gesturechange event
       const handleGestureChange = (e) => {
           e.preventDefault();
-          setPosX((prevPosX) => {
+          setPosX((_prevPosX) => {
               const newPosX = e.pageX - startX;
               // posX が MAX_POS_X を超えないように制限
               return newPosX;
@@ -100,13 +96,13 @@ function App () {
   
       // Add event listeners
       window.addEventListener('wheel', handleWheel);
-      window.addEventListener('gesturestart', handleGestureStart);
+      // window.addEventListener('gesturestart', handleGestureStart);
       window.addEventListener('gesturechange', handleGestureChange);
 
       // Cleanup on unmount
       return () => {
           window.removeEventListener('wheel', handleWheel);
-          window.removeEventListener('gesturestart', handleGestureStart);
+          // window.removeEventListener('gesturestart', handleGestureStart);
           window.removeEventListener('gesturechange', handleGestureChange);
       };
   }, [posX, startX]);

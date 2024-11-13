@@ -11,7 +11,10 @@ async function handleAddTitle(title: InsertTitle) {
 };
 
 const AddTitleModal = (
-        props: {closeModal: () => void}
+        props: {
+            closeModal: () => void, 
+            setStateAddTitle: React.Dispatch<React.SetStateAction<boolean>>
+        }
 ) => {
     const [inputValue, setInputValue] = useState<string>('');
 
@@ -23,6 +26,7 @@ const AddTitleModal = (
     };
     const handleConfirm = () => {
         if (inputValue.trim()) {
+            props.setStateAddTitle(true);
             const insertData: InsertTitle = {title: inputValue};
             handleAddTitle(insertData);
             props.closeModal(); // モーダルを閉じる

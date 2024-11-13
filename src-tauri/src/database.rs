@@ -5,7 +5,7 @@ use sqlx::{
     sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions, SqliteSynchronous}, Row, Sqlite, SqlitePool, Transaction 
 };
 
-use crate::{GetTitle, InputTime, InputTitle};
+use crate::{GetTime, GetTitle, InputTime, InputTitle};
 
 /// このモジュール内の関数の戻り値型
 type DbResult<T> = Result<T, Box<dyn std::error::Error>>;
@@ -55,7 +55,7 @@ pub(crate) async fn show_tables(pool: &SqlitePool) -> DbResult<()> {
         Ok(())
 }
 
-pub(crate) async  fn get_titles(pool: &SqlitePool) -> DbResult<Vec<GetTitle>> {
+pub(crate) async fn get_titles(pool: &SqlitePool) -> DbResult<Vec<GetTitle>> {
     const SQL: &str = "SELECT * FROM titles ORDER BY id ASC";
     let mut rows = sqlx::query(SQL).fetch(pool);
     
@@ -82,6 +82,24 @@ pub(crate) async fn insert_title(pool: &SqlitePool, title: InputTitle) -> DbResu
     Ok(())
 }
 
+pub(crate) async fn get_all_times(pool: &SqlitePool) -> DbResult<Vec<GetTime>> {
+    const SQL: &str = "SELECT times.id, titles.id as title_id, titles.title, times.start_time, times.end_time \
+    FROM times \
+    INNER JOIN titles \
+    ON times.title_id = titles.id \
+    ORDER BY times.id DESC";
+    let mut rows = sqlx::query(SQL).fetch(pool);
+    let mut times = BTreeMap::new();
+    while let Some(row) = rows.try_next().await? {
+        let id:i64 = row.try_get("id")?;
+        let title_id = row.try_get("title_id")?;
+        let title = row.try_get("title")?;
+        let start_time = row.try_get("start_time")?;
+        let end_time = row.try_get("end_time")?;
+        times.insert(id, GetTime{id, title_id, title, start_time, end_time});
+    }
+    Ok(times.into_iter().map(|(_k, v)| v).collect())
+}
 pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime) -> DbResult<()> {
     // トランザクションを開始する
     let mut tx = pool.begin().await?;
@@ -96,7 +114,8 @@ pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime) -> DbResult<
 
     // トランザクションをコミットする
     tx.commit().await?;
-
     Ok(())
 }
+
+
 
