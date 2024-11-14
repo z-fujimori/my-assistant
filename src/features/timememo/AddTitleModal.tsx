@@ -19,7 +19,7 @@ const AddTitleModal = (
     const [inputValue, setInputValue] = useState<string>('');
 
     const insideClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        e.stopPropagation();
+        e.stopPropagation(); // 子のクリックが親に伝播しないようにする
     }
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
