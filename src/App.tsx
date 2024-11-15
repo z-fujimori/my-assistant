@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 // import Keyboard from "./features/calculator/components/element/Keyboard";
 import CalcuCard from "./features/calculator/components/CalcuCard";
-import TimememoCard from "./features/timememo/TimememoCard";
+import TimememoCard from "./features/timememo/components/TimememoCard";
 import SwipeComponent from "./features/SwipeComponent";
 
 enum navigation {
@@ -78,10 +78,10 @@ function App () {
       };
   
       // Handle gesturestart event
-      const handleGestureStart = (e) => {
-          e.preventDefault();
-          setStartX(e.pageX - posX);
-      };
+      // const handleGestureStart = (e) => {
+      //     e.preventDefault();
+      //     setStartX(e.pageX - posX);
+      // };
   
       // Handle gesturechange event
       const handleGestureChange = (e) => {
@@ -109,6 +109,7 @@ function App () {
 
   const [currentPage, setCurrentPage] = useState<navigation>(navigation.calc);
 
+  console.log("content宣言");
   let Content = null;
   switch (currentPage) {
     case navigation.calc:
@@ -151,6 +152,5 @@ function App () {
       </div>
   );
 };
-
 
 export default App;

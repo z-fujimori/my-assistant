@@ -1,5 +1,7 @@
 use std::{collections::BTreeMap, str::FromStr};
 
+use chrono::naive;
+use chrono::{DateTime, NaiveDateTime, Local};
 use futures::TryStreamExt;
 use sqlx::{
     sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions, SqliteSynchronous}, Row, Sqlite, SqlitePool, Transaction 
@@ -96,6 +98,7 @@ pub(crate) async fn get_all_times(pool: &SqlitePool) -> DbResult<Vec<GetTime>> {
         let title = row.try_get("title")?;
         let start_time = row.try_get("start_time")?;
         let end_time = row.try_get("end_time")?;
+
         times.insert(id, GetTime{id, title_id, title, start_time, end_time});
     }
     Ok(times.into_iter().map(|(_k, v)| v).collect())

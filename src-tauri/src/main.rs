@@ -4,6 +4,7 @@
 use serde::{Deserialize, Serialize};
 use tauri::{Manager, State};
 pub(crate) mod database;
+use chrono::{DateTime, NaiveDateTime, Local, TimeZone};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct InputTime{
@@ -18,7 +19,7 @@ pub struct GetTime{
     title_id: i64,
     title: String,
     start_time: String,
-    end_time: String
+    end_time: String,
 }
 impl GetTime {
 }
@@ -81,7 +82,23 @@ async fn get_all_times(sqlite_pool:  State<'_, sqlx::SqlitePool>) -> Result<Time
     let times = database::get_all_times(&sqlite_pool)
         .await
         .map_err(|e| e.to_string())?;
-    Ok(Times { times })
+
+    let data:Vec<GetTime> = times.into_iter().map(|mut v| {
+        // `start_time`と`end_time`を`&str`として借用してから`NaiveDateTime`にパース
+        let naive_start_time = NaiveDateTime::parse_from_str(&v.start_time, "%Y/%m/%d %H:%M:%S")
+            .expect("Failed to parse start time");
+        let naive_end_time = NaiveDateTime::parse_from_str(&v.end_time, "%Y/%m/%d %H:%M:%S")
+            .expect("Failed to parse end time");
+        // ローカルタイムゾーンの`DateTime<Local>`に変換
+        let datetime_start = Local.from_utc_datetime(&naive_start_time);
+        let datetime_end = Local.from_utc_datetime(&naive_end_time);
+        // `DateTime`を`String`に変換して保存
+        v.start_time = datetime_start.to_string();
+        v.end_time = datetime_end.to_string();
+        v
+    }).collect();
+
+    Ok(Times { times:data })
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
