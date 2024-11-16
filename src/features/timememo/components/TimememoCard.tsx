@@ -1,4 +1,4 @@
-// import React from 'react'
+import React from 'react'
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import AddTitleModal from "./element/AddTitleModal";
@@ -40,9 +40,6 @@ const TimememoCard = () => {
     const closeModal = () => setIsModalOpen(false);
     // title
     const [titleId, setTitleId] = useState<string>('');
-    const titleChange = (e:  React.ChangeEvent<HTMLSelectElement>) => {
-        setTitleId(e.target.value);
-    }
     const [timeHist, setTimeHist] = useState<Times|null>(null);
 
     useEffect(() => {
@@ -62,12 +59,12 @@ const TimememoCard = () => {
     return (
         <div className="">
             <div className="frame"></div>
-            <Title titleChange={titleChange} titles={titles} openModal={openModal} />
-            <div className="absolute mt-5 w-[85%] m-auto right-0 left-0 flex flex-row-reverse flex-wrap md:flex-nowrap justify-between items-start">
+            <Title setTitleId={setTitleId} titles={titles} openModal={openModal} />
+            {isModalOpen && <AddTitleModal closeModal={closeModal} setStateAddTitle={setStateAddTitle} />}
+            <div className="mt-5 w-[85%] m-auto right-0 left-0 flex flex-row-reverse flex-wrap md:flex-nowrap justify-between items-start">
                 <Timer titleId={titleId} />
                 <TimeHist timeHist={timeHist} setTimeHist={setTimeHist} />
             </div>
-            {isModalOpen && <AddTitleModal closeModal={closeModal} setStateAddTitle={setStateAddTitle} />}
         </div>
 
     )

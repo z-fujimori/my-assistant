@@ -4,6 +4,8 @@ import "./App.css";
 import CalcuCard from "./features/calculator/components/CalcuCard";
 import TimememoCard from "./features/timememo/components/TimememoCard";
 import SwipeComponent from "./features/SwipeComponent";
+import Container from "./Container";
+
 
 enum navigation {
   calc = "calculator",
@@ -127,9 +129,8 @@ function App () {
     console.log("touch start");
   };
 
-
   return (
-      <div 
+      <div
         className="m-10" 
         onTouchStart={handleTouchStart}
       >
