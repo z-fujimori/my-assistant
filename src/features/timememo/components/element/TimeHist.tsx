@@ -1,4 +1,4 @@
-// import React from 'react'
+import React from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import {GetTime, Times} from '../TimememoCard'
 import { useEffect } from 'react';
@@ -41,7 +41,7 @@ export const TimeHist = (
             <div className='flex flex-col overflow-x-auto'>
                 {props.timeHist ? (
                     props.timeHist.times.map((time) => (
-                        <div className='flex flex-none space-x-2 '>
+                        <div key={time.id} className='flex flex-none space-x-2 '>
                             <p>{time.title}</p>
                             <p>{time.start_time}</p>
                             <p>{time.end_time}</p>

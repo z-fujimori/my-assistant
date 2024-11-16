@@ -1,3 +1,4 @@
+import React from 'react'
 
 const MemoryNumber = (props:{mem:number, func:()=>void}) => {
     return (

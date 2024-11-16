@@ -1,16 +1,19 @@
-// import React from 'react'
+import React from 'react'
 import { Titles } from "../TimememoCard"
 
 const Title = (props:{
-    titleChange: (e: React.ChangeEvent<HTMLSelectElement>) => void,
+    setTitleId: React.Dispatch<React.SetStateAction<string>>,
     titles: Titles | null, 
     openModal: () => void,
 }) => {
+    const titleChange = (e:  React.ChangeEvent<HTMLSelectElement>) => {
+        props.setTitleId(e.target.value);
+    }
     return (
         <div className="flex">
             <select name="" id=""
                 className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 "
-                onChange={props.titleChange}
+                onChange={titleChange}
             >
                 {props.titles ? (
                     props.titles.titles.map((title) => (
