@@ -1,4 +1,4 @@
-// import React from 'react'
+import React from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import {GetTime, Times} from '../TimememoCard'
 import { useEffect } from 'react';

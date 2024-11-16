@@ -3,6 +3,7 @@ import NumberKeyboard from './element/NumberKeyboard';
 import SymbolKeyboard from './element/SymbolKeyboard';
 import ResetKeyboard from './element/ResetKeyboard';
 import MemoryNumber from './element/MemoryNumber';
+import React from 'react'
 
 const CalcuCard = () => {
 
