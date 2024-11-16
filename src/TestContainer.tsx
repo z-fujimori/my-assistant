@@ -12,7 +12,7 @@ import { invoke } from '@tauri-apps/api/core';
 
 import "./App.css";
 
-const Container = () => {
+const TestContainer = () => {
     // timeメモ履歴
     const [timeHist, setTimeHist] = useState<Times|null>(null);
     // timeメモtitle
@@ -60,4 +60,4 @@ const Container = () => {
     )
 }
 
-export default Container
+export default TestContainer

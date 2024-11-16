@@ -34,6 +34,14 @@ const Test2 = (props:{
           +
         </button>
       </div>
+
+      <select name="" id="">
+        <option value="">a</option>
+        <option value="">happy</option>
+        <option value="">５６</option>
+        <option value="">が</option>
+      </select>
+
     </div>
 
   )
