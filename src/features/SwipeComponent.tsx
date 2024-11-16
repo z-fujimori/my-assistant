@@ -19,7 +19,7 @@ const SwipeComponent: React.FC = () => {
                     <CalcuCard />
                 </CarouselItem>
                 <CarouselItem>
-                    <TimememoCard />
+                    121212121å
                 </CarouselItem>
                 <CarouselItem>kokokokoko</CarouselItem>
             </CarouselContent>

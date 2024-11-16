@@ -5,8 +5,8 @@ import {
     CarouselItem,
     CarouselNext,
     CarouselPrevious,
-} from "../components/ui/carousel";
-import { Times, Titles } from './features/timememo/components/TimememoCard';
+} from "../../components/ui/carousel";
+import { Times, Titles } from '../features/timememo/components/TimememoCard';
 import Swipe from './Swipe';
 import { invoke } from '@tauri-apps/api/core';
 

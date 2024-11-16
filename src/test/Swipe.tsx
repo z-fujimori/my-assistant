@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import Test1 from "./test/Test1";
-import Test2 from "./test/Test2";
-import Test3 from "./test/Test3";
-import { Times, Titles } from './features/timememo/components/TimememoCard';
+import Test1 from "./Test1";
+import Test2 from "./Test2";
+import Test3 from "./Test3";
+import { Times, Titles } from '../features/timememo/components/TimememoCard';
 
 enum navigation {
     calc = "calculator",
