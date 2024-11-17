@@ -6,21 +6,29 @@ import { InputTime } from "../TimememoCard";
 
 const Timer = (props:{
     titleId: string,
+    seconds: number, 
+	setSeconds: React.Dispatch<React.SetStateAction<number>>,
+	isActive: boolean,
+	setIsActive: React.Dispatch<React.SetStateAction<boolean>>,
+	isPaused: boolean,
+	setIsPaused: React.Dispatch<React.SetStateAction<boolean>>,
+	start_t: string,
+	setStart: React.Dispatch<React.SetStateAction<string>>,
 }) => {
-    const [seconds, setSeconds] = useState(0);
-    const [isActive, setIsActive] = useState(false);
-    const [isPaused, setIsPaused] = useState(false);
-    const [start_t, setStart] = useState<string>("");
+    // const [seconds, setSeconds] = useState(0);
+    // const [isActive, setIsActive] = useState(false);
+    // const [isPaused, setIsPaused] = useState(false);
+    // const [start_t, setStart] = useState<string>(""); // スタートした時間
 
     useEffect(() => {
         let intervalId: number;
-        if (isActive && !isPaused) {
+        if (props.isActive && !props.isPaused) {
         intervalId = setInterval(() => {
-            setSeconds((prevSeconds) => prevSeconds + 1);
+            props.setSeconds((prevSeconds) => prevSeconds + 1);
         }, 1000);
         }
         return () => clearInterval(intervalId);
-    }, [isActive, isPaused]);
+    }, [props.isActive, props.isPaused]);
 
     function formatTime(totalSeconds: number){
         const minutes = Math.floor(totalSeconds / 60);
@@ -31,32 +39,32 @@ const Timer = (props:{
         )}`;
     };
     const startTimer = () => {
-        setStart( new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) );
-        setIsActive(true);
-        setIsPaused(false);
+        props.setStart( new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) );
+        props.setIsActive(true);
+        props.setIsPaused(false);
     };
     const pauseTimer = () => {
         const end_t = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
-        postTime(start_t, end_t, props.titleId);
-        setStart("");
+        postTime(props.start_t, end_t, props.titleId);
+        props.setStart("");
 
-        setIsPaused(true);
+        props.setIsPaused(true);
     };
 
     const restartTimer = () => {
-        setStart(new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }));
-        setIsPaused(false);
+        props.setStart(new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }));
+        props.setIsPaused(false);
     };
 
     const stopTimer = () => {
-        if (!isPaused) {
+        if (!props.isPaused) {
             const end_t = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
-            postTime(start_t, end_t, props.titleId)
-            setStart("");
+            postTime(props.start_t, end_t, props.titleId)
+            props.setStart("");
         }
-        
-        setIsActive(false);
-        setSeconds(0);
+        props.setIsPaused(false);
+        props.setIsActive(false);
+        props.setSeconds(0);
     };
 
     const postTime = async (start:string, end:string, title_id: string) => {
@@ -71,10 +79,10 @@ const Timer = (props:{
     return (
         <div className="md:w-[68%] w-full lg:ml-10 md:ml-5 ml-0">
             <p className="leading-tight md:mt-0 mt-[-20px] xl:text-[260px] lg:text-[200px] md:text-[140px] text-[100px]  m-auto h-fit md:w-0 md:m-0 text-gray-300">
-                {formatTime(seconds)}
+                {formatTime(props.seconds)}
             </p>
             <div className="flex justify-between border-t border-gray-800">
-                {!isActive && !isPaused && (
+                {!props.isActive && !props.isPaused && (
                     <button
                         onClick={() => {
                             startTimer();
@@ -84,7 +92,7 @@ const Timer = (props:{
                         Start
                     </button>
                 )}
-                {isActive && !isPaused && (
+                {props.isActive && !props.isPaused && (
                     <button
                         onClick={pauseTimer}
                         className="hover:opacity-80 hover:duration-300 rounded-md bg-[#181818] md:w-[120px] w-[80px] md:p-5 p-2 mt-5"
@@ -92,7 +100,7 @@ const Timer = (props:{
                         Pause
                     </button>
                 )}
-                {isPaused && (
+                {props.isPaused && (
                     <button
                         onClick={restartTimer}
                         className="hover:opacity-80 hover:duration-300 rounded-md bg-[#333333] md:w-[120px] w-[80px] md:p-5 p-2 mt-5"
@@ -100,7 +108,7 @@ const Timer = (props:{
                         ReStart
                     </button>
                 )}
-                {isActive && (
+                {props.isActive && (
                     <button
                         onClick={() => {
                             stopTimer();

@@ -24,7 +24,7 @@ const Swipe = (props:{
     const MOVE_SPEED = 0.1;
     const navArray = [navigation.calc, navigation.time, navigation.swipe];
 
-    console.log("content宣言");
+    console.log("content宣");
     let Content = null;
     switch (currentPage) {
         case navigation.calc:

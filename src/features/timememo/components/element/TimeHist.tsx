@@ -10,31 +10,31 @@ export const TimeHist = (
     }
 ) => {
 
-    async function get_all_time() {
-        const times:Times|null = await invoke<Times>("get_all_times", {})
-            .catch(err => {
-                console.log(err);
-                return null
-            });
-        props.setTimeHist(times);
-        console.log("get all time");
-    }
+    // async function get_all_time() {
+    //     const times:Times|null = await invoke<Times>("get_all_times", {})
+    //         .catch(err => {
+    //             console.log(err);
+    //             return null
+    //         });
+    //     props.setTimeHist(times);
+    //     console.log("get all time");
+    // }
 
-    useEffect(() => {
-        // (async () =>{
-        //     await get_all_time();
-        //     console.log("time effect");
-        // })();
-        (async () => {
-            const titles = await invoke<Times>("get_all_times", {})
-            .catch(err => {
-                console.error(err)
-                return null
-            });
-            props.setTimeHist(titles);
-            console.log("title effect");
-        })();
-    },[])
+    // useEffect(() => {
+    //     // (async () =>{
+    //     //     await get_all_time();
+    //     //     console.log("time effect");
+    //     // })();
+    //     (async () => {
+    //         const titles = await invoke<Times>("get_all_times", {})
+    //         .catch(err => {
+    //             console.error(err)
+    //             return null
+    //         });
+    //         props.setTimeHist(titles);
+    //         console.log("title effect");
+    //     })();
+    // },[])
 
     return (
         <>

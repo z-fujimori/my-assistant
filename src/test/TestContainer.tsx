@@ -35,7 +35,7 @@ const TestContainer = () => {
                     return null
                 });
                 setTimeHist(titles);
-                console.log("title effect");
+                console.log("title effect test");
             })();
         },[])
     // timeメモtitle
@@ -49,7 +49,7 @@ const TestContainer = () => {
             });
             setTitles(titles);
             setStateAddTitle(false);
-            console.log("title effect");
+            console.log("title effect テスト");
         })();
     }, [stateAddTitle])
 

@@ -1,7 +1,5 @@
 use std::{collections::BTreeMap, str::FromStr};
-
-use chrono::naive;
-use chrono::{DateTime, NaiveDateTime, Local};
+// use chrono::{DateTime, NaiveDateTime, Local};
 use futures::TryStreamExt;
 use sqlx::{
     sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions, SqliteSynchronous}, Row, Sqlite, SqlitePool, Transaction 
@@ -56,7 +54,6 @@ pub(crate) async fn show_tables(pool: &SqlitePool) -> DbResult<()> {
 
         Ok(())
 }
-
 pub(crate) async fn get_titles(pool: &SqlitePool) -> DbResult<Vec<GetTitle>> {
     const SQL: &str = "SELECT * FROM titles ORDER BY id ASC";
     let mut rows = sqlx::query(SQL).fetch(pool);
