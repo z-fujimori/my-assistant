@@ -157,8 +157,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // デバックdb確認
-    if cfg!(debug_assertions) {
-        println!("{}", db_exists);
+    if cfg!(debug_assertions) {println!("{}", db_exists);
         block_on(database::show_tables(&sqlite_pool))?;
     }
     
