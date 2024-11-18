@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { invoke } from "@tauri-apps/api/core";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { InputTime } from "../TimememoCard";
 
 const Timer = (props:{
@@ -15,10 +15,6 @@ const Timer = (props:{
 	start_t: string,
 	setStart: React.Dispatch<React.SetStateAction<string>>,
 }) => {
-    // const [seconds, setSeconds] = useState(0);
-    // const [isActive, setIsActive] = useState(false);
-    // const [isPaused, setIsPaused] = useState(false);
-    // const [start_t, setStart] = useState<string>(""); // スタートした時間
 
     useEffect(() => {
         let intervalId: number;

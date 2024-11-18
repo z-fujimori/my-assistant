@@ -1,7 +1,5 @@
-import React from 'react'
-import { invoke } from '@tauri-apps/api/core'
-import {GetTime, Times} from '../TimememoCard'
-import { useEffect } from 'react';
+// import React from 'react'
+import {Times} from '../TimememoCard'
 
 export const TimeHist = (
     props: {
@@ -9,32 +7,6 @@ export const TimeHist = (
         setTimeHist: React.Dispatch<React.SetStateAction<Times | null>>
     }
 ) => {
-
-    // async function get_all_time() {
-    //     const times:Times|null = await invoke<Times>("get_all_times", {})
-    //         .catch(err => {
-    //             console.log(err);
-    //             return null
-    //         });
-    //     props.setTimeHist(times);
-    //     console.log("get all time");
-    // }
-
-    // useEffect(() => {
-    //     // (async () =>{
-    //     //     await get_all_time();
-    //     //     console.log("time effect");
-    //     // })();
-    //     (async () => {
-    //         const titles = await invoke<Times>("get_all_times", {})
-    //         .catch(err => {
-    //             console.error(err)
-    //             return null
-    //         });
-    //         props.setTimeHist(titles);
-    //         console.log("title effect");
-    //     })();
-    // },[])
 
     return (
         <>

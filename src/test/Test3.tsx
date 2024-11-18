@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import { Times } from '../features/timememo/components/TimememoCard'
 
 const Test3 = (props:{

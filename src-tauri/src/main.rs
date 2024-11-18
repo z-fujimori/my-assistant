@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 use tauri::{Manager, State};
 pub(crate) mod database;
@@ -106,28 +107,32 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     use tauri::async_runtime::block_on;
 
     // データベースのファイルパス等を設定する
-    const DATABASE_DIR: &str = "my-asi-db";
+    const DATABASE_DIR: &str = "my_asi_db";
     const DATABASE_FILE: &str = "db.sqlite";
     // ユーザのホームディレクトリ直下にデータベースのディレクトリを作成する
     // もし、各OSで標準的に使用されるアプリ専用のデータディレクトリに保存したいなら
     // directoriesクレートの`ProjectDirs::data_dir`メソッドなどを使うとよい
     // https://docs.rs/directories/latest/directories/struct.ProjectDirs.html#method.data_dir
-    let home_dir = directories::UserDirs::new()
-        .map(|dirs| dirs.home_dir().to_path_buf())
-        // ホームディレクトリが取得できないときはカレントディレクトリを使う
-        .unwrap_or_else(|| std::env::current_dir().expect("Cannot access the current directory"));
-    let database_dir = home_dir.join(DATABASE_DIR);
+    // let home_dir = directories::UserDirs::new()
+    //     .map(|dirs| dirs.home_dir().to_path_buf())
+    //     // ホームディレクトリが取得できないときはカレントディレクトリを使う
+    //     .unwrap_or_else(|| std::env::current_dir().expect("Cannot access the current directory"));
+    // let database_dir = home_dir.join(DATABASE_DIR); // ホームディレクトリではなくなったので書き換え
+    // 上記のホームディレクトリ指定からアプリ専用データディレクトリに変更
+    let app_dir = ProjectDirs::from("com", "dev", "myassi")
+      .ok_or("プロジェクトディレクトリの取得に失敗しました")?;
+    let database_dir = app_dir.data_dir();
     let database_file = database_dir.join(DATABASE_FILE);
 
     // データベースファイルが存在するかチェックする
-    let db_exists = std::fs::metadata(&database_file).is_ok();
+    // let db_exists = std::fs::metadata(&database_file).is_ok();  // ホームディレクトリ関係で一旦
+    let db_exists = database_dir.exists();
     // 存在しないなら、ファイルを格納するためのディレクトリを作成する
     if !db_exists {
         std::fs::create_dir(&database_dir)?;
     }
 
     // データベースURLを作成する
-    //
     // std::fs::canonicalizeを、dunce::canonicalizeに変更
     //
     //     stdのcanonicalizeは、Windows環境ではUNCパス（例：\\?\C:\Users\..）を返すが、
@@ -157,6 +162,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // デバックdb確認
+    #[cfg(debug_assertions)]
     if cfg!(debug_assertions) {println!("{}", db_exists);
         block_on(database::show_tables(&sqlite_pool))?;
     }

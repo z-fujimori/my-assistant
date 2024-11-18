@@ -86,7 +86,7 @@ const Swipe = (props:{
         };
 
         // Handle wheel events for scaling and translating
-        const handleWheel = (e) => {
+        const handleWheel = (e:any) => {
             e.preventDefault();
             setPosX((prevPosX) => {
                 const newPosX = prevPosX - e.deltaX * MOVE_SPEED;
@@ -97,7 +97,7 @@ const Swipe = (props:{
         };
     
         // Handle gesturechange event
-        const handleGestureChange = (e) => {
+        const handleGestureChange = (e:any) => {
             e.preventDefault();
             setPosX((_prevPosX) => {
                 const newPosX = e.pageX - startX;

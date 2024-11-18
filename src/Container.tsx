@@ -4,8 +4,8 @@ import { Times, Titles } from './types/timeMemo';
 import { invoke } from '@tauri-apps/api/core';
 import Swipe from './features/swipeWindow/Swipe';
 import CalcuCard from './features/calculator/components/CalcuCard';
+import DebugComponent from './features/DebugComponent';
 import TimememoCard from './features/timememo/components/TimememoCard';
-import SwipeComponent from './features/SwipeComponent';
 
 export enum navigation {
   calc = "calculator",
@@ -93,7 +93,7 @@ const Container = () => {
     start_t={start_t}
     setStart={setStart}
   />);
-  const TestContent = (() => <SwipeComponent />);
+  const TestContent = (() => <DebugComponent />);
 
   return (
     <>
