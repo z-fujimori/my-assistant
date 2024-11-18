@@ -18,18 +18,17 @@ const Swipe = (props:{
 
   console.log("content宣言");
   let Content = props.CalContent;
-  let TimContent = props.TimContent;
-  // switch (props.currentPage) {
-  //   case navigation.calc:
-  //     Content = props.CalContent;
-  //     break;
-  //     case navigation.time:
-  //       Content = props.TimContent;
-  //       break;
-  //       case navigation.swipe:
-  //         Content = props.TestContent;
-  //     break;
-  // }
+  switch (props.currentPage) {
+    case navigation.calc:
+      Content = props.CalContent;
+      break;
+      case navigation.time:
+        Content = props.TimContent;
+        break;
+        case navigation.swipe:
+          Content = props.TestContent;
+      break;
+  }
 
   function resetSwipe () {
     setPosX(0);
@@ -129,16 +128,16 @@ const Swipe = (props:{
       <button 
         className="m-2 p-3 bg-dark" 
         onClick={()=>props.setCurrentPage(navigation.swipe)}
-      >スワイプtest</button>
+      >デバッグtest</button>
       </div>
 
       {/* <CalcuCard /> */}
-      {/* <Content /> */}
-      {props.currentPage == navigation.calc ? (
+      <Content />
+      {/* {props.currentPage == navigation.calc ? (
         <Content />
       ) : (
         <TimContent />
-      )}
+      )} */}
 
       <div className='mt-3'>
         <p>posX   : {posX}</p>

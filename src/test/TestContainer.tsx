@@ -1,11 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-} from "../../components/ui/carousel";
+import { useEffect, useState } from 'react'
 import { Times, Titles } from '../features/timememo/components/TimememoCard';
 import Swipe from './Swipe';
 import { invoke } from '@tauri-apps/api/core';
@@ -18,9 +11,9 @@ const TestContainer = () => {
     // timeメモtitle
     const [titles, setTitles] = useState<Titles | null>(null);
     const [stateAddTitle, setStateAddTitle] = useState(false);
-    const [titleId, setTitleId] = useState<string>('');
+    const [_titleId, setTitleId] = useState<string>('');
     // titleのモーダル
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [_isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);
     // timeメモ履歴
     useEffect(() => {
