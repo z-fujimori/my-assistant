@@ -6,11 +6,13 @@ import Swipe from './features/swipeWindow/Swipe';
 import CalcuCard from './features/calculator/components/CalcuCard';
 import DebugComponent from './features/DebugComponent';
 import TimememoCard from './features/timememo/components/TimememoCard';
+import Task from './features/task/components/Task';
 
 export enum navigation {
   calc = "calculator",
   time = "timememo",
   swipe = "swipetest",
+  task = "task"
 }
 
 const Container = () => {
@@ -94,6 +96,7 @@ const Container = () => {
     setStart={setStart}
   />);
   const TestContent = (() => <DebugComponent />);
+  const TaskContent = (() => <Task />)
 
   return (
     <>
@@ -103,6 +106,7 @@ const Container = () => {
         CalContent = {CalContent} 
         TimContent={TimContent} 
         TestContent={TestContent}
+        TaskContent={TaskContent}
       />
     </>
   )
