@@ -5,7 +5,7 @@ use sqlx::{
     sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions, SqliteSynchronous}, Row, Sqlite, SqlitePool, Transaction 
 };
 
-use crate::{GetTime, GetTitle, InputTime, InputTitle};
+use crate::{GetTime, GetTask, InputTime, InputTask};
 
 /// このモジュール内の関数の戻り値型
 type DbResult<T> = Result<T, Box<dyn std::error::Error>>;
@@ -36,7 +36,6 @@ pub(crate) async fn migrate_database(pool: &SqlitePool) -> DbResult<()> {
 }
 #[cfg(debug_assertions)] // リリースビルドでは無視
 pub(crate) async fn show_tables(pool: &SqlitePool) -> DbResult<()> {
-  // let dynamic_column = "title";
   let rows = sqlx::query(
     &format!("SELECT {} FROM times", "*")
   )
@@ -46,35 +45,36 @@ pub(crate) async fn show_tables(pool: &SqlitePool) -> DbResult<()> {
 
   for row in rows {
     let id: i64 = row.get("id");
-    let title_id: i64 = row.get("title_id");
+    let task_id: i64 = row.get("task_id");
     let start_time: String = row.get("start_time");
     let end_time: String = row.get("end_time");
 
-    println!("id: {}, title_id: {}, start_time: {}, end_time: {}", id, title_id, start_time, end_time);
+    println!("id: {}, task_id: {}, start_time: {}, end_time: {}", id, task_id, start_time, end_time);
   }
 
   Ok(())
 }
-pub(crate) async fn get_titles(pool: &SqlitePool) -> DbResult<Vec<GetTitle>> {
-  const SQL: &str = "SELECT * FROM titles ORDER BY id ASC";
+pub(crate) async fn get_all_tasks(pool: &SqlitePool) -> DbResult<Vec<GetTask>> {
+  const SQL: &str = "SELECT * FROM tasks ORDER BY id ASC";
   let mut rows = sqlx::query(SQL).fetch(pool);
   
-  let mut titles = BTreeMap::new();
+  let mut tasks = BTreeMap::new();
   while let Some(row) = rows.try_next().await? {
     let id: i64 = row.try_get("id")?;
-    let title: &str = row.try_get("title")?;
-    titles.insert(id, GetTitle::new(id, title));
+    let name: &str = row.try_get("name")?;
+    tasks.insert(id, GetTask::new(id, name));
   }
 
-  Ok(titles.into_iter().map(|(_k, v)| v).collect())
+  Ok(tasks.into_iter().map(|(_k, v)| v).collect())
 }
 
-pub(crate) async fn insert_title(pool: &SqlitePool, title: InputTitle) -> DbResult<()> {
+pub(crate) async fn insert_task(pool: &SqlitePool, task: InputTask) -> DbResult<()> {
+  println!("{:?}",task);
   // トランザクションを開始する
   let mut tx = pool.begin().await?;
   // 挿入
-  sqlx::query("INSERT INTO titles (title) VALUES (?)")
-    .bind(title.title)
+  sqlx::query("INSERT INTO tasks (name) VALUES (?)")
+    .bind(task.name)
     .execute(&mut *tx)
     .await?;
   // トランザクションをコミット
@@ -83,21 +83,21 @@ pub(crate) async fn insert_title(pool: &SqlitePool, title: InputTitle) -> DbResu
 }
 
 pub(crate) async fn get_all_times(pool: &SqlitePool) -> DbResult<Vec<GetTime>> {
-  const SQL: &str = "SELECT times.id, titles.id as title_id, titles.title, times.start_time, times.end_time \
+  const SQL: &str = "SELECT times.id, tasks.id as task_id, tasks.name, times.start_time, times.end_time \
   FROM times \
-  INNER JOIN titles \
-  ON times.title_id = titles.id \
+  INNER JOIN tasks \
+  ON times.task_id = tasks.id \
   ORDER BY times.id DESC";
   let mut rows = sqlx::query(SQL).fetch(pool);
   let mut times = BTreeMap::new();
   while let Some(row) = rows.try_next().await? {
     let id:i64 = row.try_get("id")?;
-    let title_id = row.try_get("title_id")?;
-    let title = row.try_get("title")?;
+    let task_id = row.try_get("task_id")?;
+    let task = row.try_get("name")?;
     let start_time = row.try_get("start_time")?;
     let end_time = row.try_get("end_time")?;
 
-    times.insert(id, GetTime{id, title_id, title, start_time, end_time});
+    times.insert(id, GetTime{id, task_id, task, start_time, end_time});
   }
   Ok(times.into_iter().map(|(_k, v)| v).collect())
 }
@@ -105,9 +105,9 @@ pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime) -> DbResult<
   // トランザクションを開始する
   let mut tx = pool.begin().await?;
   // テーブルに挿入
-  sqlx::query("INSERT INTO times (title_id, start_time, end_time) VALUES (?, ?, ?)")
+  sqlx::query("INSERT INTO times (task_id, start_time, end_time) VALUES (?, ?, ?)")
     // .bind(time.id)
-    .bind(time.title_id)
+    .bind(time.task_id)
     .bind(time.start_time)
     .bind(time.end_time)
     .execute(pool)

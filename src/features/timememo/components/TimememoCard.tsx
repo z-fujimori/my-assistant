@@ -1,42 +1,19 @@
 import React from 'react'
 import { useState } from "react";
-import AddTitleModal from "./element/AddTitleModal";
+import AddTaskModal from './element/AddTaskModal';
 import { TimeHist } from "./element/TimeHist";
-import Title from "./element/Title";
+import Task from "./element/Task";
 import Timer from "./element/Timer";
-
-export type InputTime = {
-    // id: number,
-    title_id: number,
-    start_time: string,
-    end_time: string
-}
-export type GetTime = {
-    id: number,
-    title_id: number,
-    title: string,
-    start_time: string,
-    end_time: string
-}
-export type Times = {
-    times: [GetTime]
-}
-type Title = {
-    id: number;
-    title: string;
-}
-export type Titles = {
-    titles: [Title]
-}
+import { Tasks, Times } from '../../../types/timeMemo';
 
 const TimememoCard = (props:{
 	timeHist: Times | null,
 	setTimeHist: React.Dispatch<React.SetStateAction<Times | null>>
-	titleId: string,
-	setTitleId: React.Dispatch<React.SetStateAction<string>>,
-	titles: Titles | null,
-	titleChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, 
-	setStateAddTitle: React.Dispatch<React.SetStateAction<boolean>>,
+	taskId: string,
+	setTaskId: React.Dispatch<React.SetStateAction<string>>,
+	tasks: Tasks | null,
+	taskChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, 
+	setStateAddTask: React.Dispatch<React.SetStateAction<boolean>>,
 	seconds: number, 
 	setSeconds: React.Dispatch<React.SetStateAction<number>>,
 	isActive: boolean,
@@ -54,11 +31,11 @@ const TimememoCard = (props:{
 	return (
 		<div className="">
 			<div className="frame"></div>
-			<Title titleId={props.titleId} setTitleId={props.setTitleId} titles={props.titles} openModal={openModal} titleChange={props.titleChange} />
-			{isModalOpen && <AddTitleModal closeModal={closeModal} setStateAddTitle={props.setStateAddTitle} />}
+			<Task taskId={props.taskId} setTaskId={props.setTaskId} tasks={props.tasks} openModal={openModal} taskChange={props.taskChange} />
+			{isModalOpen && <AddTaskModal closeModal={closeModal} setStateAddTask={props.setStateAddTask} />}
 			<div className="mt-5 w-[85%] m-auto right-0 left-0 flex flex-row-reverse flex-wrap md:flex-nowrap justify-between items-start">
 				<Timer 
-					titleId={props.titleId} 
+					taskId={props.taskId} 
 					seconds={props.seconds} 
 					setSeconds={props.setSeconds}
 					isActive={props.isActive}

@@ -14,7 +14,7 @@ export const TimeHist = (
                 {props.timeHist ? (
                     props.timeHist.times.map((time) => (
                         <div key={time.id} className='flex flex-none space-x-2 '>
-                            <p>{time.title}</p>
+                            <p>{time.task}</p>
                             <p>{time.start_time}</p>
                             <p>{time.end_time}</p>
                         </div>

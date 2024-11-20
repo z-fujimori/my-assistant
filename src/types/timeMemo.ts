@@ -1,23 +1,23 @@
 export type InputTime = {
   // id: number,
-  title_id: number,
+  task_id: number,
   start_time: string,
   end_time: string
 }
 export type GetTime = {
   id: number,
-  title_id: number,
-  title: string,
+  task_id: number,
+  name: string,
   start_time: string,
   end_time: string
 }
 export type Times = {
   times: [GetTime]
 }
-type Title = {
+type Task = {
   id: number;
-  title: string;
+  name: string;
 }
-export type Titles = {
-  titles: [Title]
+export type Tasks = {
+  tasks: [Task]
 }

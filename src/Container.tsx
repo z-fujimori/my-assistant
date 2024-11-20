@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import "./App.css"
-import { Times, Titles } from './types/timeMemo';
+import { Times, Tasks } from './types/timeMemo';
 import { invoke } from '@tauri-apps/api/core';
 import Swipe from './features/swipeWindow/Swipe';
 import CalcuCard from './features/calculator/components/CalcuCard';
@@ -28,41 +28,41 @@ const Container = () => {
   const [start_t, setStart] = useState<string>(""); // スタートした時間
   // timeメモ履歴
   const [timeHist, setTimeHist] = useState<Times|null>(null);
-  // timeメモtitle
-  const [titles, setTitles] = useState<Titles | null>(null);
-  const [stateAddTitle, setStateAddTitle] = useState(false);
-  const [titleId, setTitleId] = useState<string>('1');
-  // titleのモーダル
+  // timeメモtask
+  const [tasks, setTasks] = useState<Tasks | null>(null);
+  const [stateAddTask, setStateAddTask] = useState(false);
+  const [taskId, setTaskId] = useState<string>('1');
+  // taskのモーダル
   // const [isModalOpen, setIsModalOpen] = useState(false);
   // const openModal = () => setIsModalOpen(true);
   // timeメモ履歴
   useEffect(() => {
     (async () => {
-      const titles = await invoke<Times>("get_all_times", {})
+      const tasks = await invoke<Times>("get_all_times", {})
       .catch(err => {
         console.error(err)
         return null
       });
-      setTimeHist(titles);
+      setTimeHist(tasks);
       console.log("times all get");
     })();
   },[isActive])
-  // timeメモtitle
+  // timeメモtask
   useEffect(() => {
       // 即時実行関数でuseEffect内で非同期実装
       (async () => {
-          const titles = await invoke<Titles>("get_titles", {})
+          const tasks = await invoke<Tasks>("get_all_tasks", {})
           .catch(err => {
               console.error(err)
               return null
           });
-          setTitles(titles);
-          setStateAddTitle(false);
-          console.log("title get");
+          setTasks(tasks);
+          setStateAddTask(false);
+          console.log("task get");
       })();
-  }, [stateAddTitle])
-  const  titleChange = (e:  React.ChangeEvent<HTMLSelectElement>) => {
-    setTitleId(e.target.value);
+  }, [stateAddTask])
+  const  taskChange = (e:  React.ChangeEvent<HTMLSelectElement>) => {
+    setTaskId(e.target.value);
   }
   
   // ページ
@@ -80,11 +80,11 @@ const Container = () => {
   const TimContent = (() => <TimememoCard 
     timeHist={timeHist} 
     setTimeHist={setTimeHist}
-    titleId={titleId}
-    setTitleId={setTitleId} 
-    titles={titles} 
-    titleChange={titleChange}
-    setStateAddTitle={setStateAddTitle}
+    taskId={taskId}
+    setTaskId={setTaskId} 
+    tasks={tasks} 
+    taskChange={taskChange}
+    setStateAddTask={setStateAddTask}
     // 時間情報(経過時間,ボタン状態,スタート時間)
     seconds={seconds} 
     setSeconds={setSeconds}
