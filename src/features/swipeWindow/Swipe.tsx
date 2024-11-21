@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { navigation } from '../../Container';
+import NavCard from './components/NavCard';
 
 const Swipe = (props:{
   currentPage: navigation ,
@@ -118,25 +119,13 @@ const Swipe = (props:{
 
   return (
     <div
-      className="m-10"
+      className="m-10 text-gray-300"
     >
-      <div className="m-3">
-      <button
-        className="m-2 p-3 bg-dark" 
-        onClick={()=>props.setCurrentPage(navigation.calc)}
-        >計算機</button>
-      <button 
-        className="m-2 p-3 bg-dark" 
-        onClick={()=>props.setCurrentPage(navigation.time)}
-      >time memo</button>
-      <button 
-        className="m-2 p-3 bg-dark" 
-        onClick={()=>props.setCurrentPage(navigation.swipe)}
-      >デバッグtest</button>
-      <button
-        className='m-2 p-3 bg-dark'
-        onClick={()=>props.setCurrentPage(navigation.task)}
-      >タスク編集</button>
+      <div className="m-3 flex">
+        <NavCard text="電卓" clickIvent={()=>props.setCurrentPage(navigation.calc)} />
+        <NavCard text="timeメモ" clickIvent={()=>props.setCurrentPage(navigation.time)} />
+        <NavCard text="デバッグtest" clickIvent={()=>props.setCurrentPage(navigation.swipe)} />
+        <NavCard text="タスク編集" clickIvent={()=>props.setCurrentPage(navigation.task)} />
       </div>
 
       {/* <CalcuCard /> */}

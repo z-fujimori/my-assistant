@@ -16,6 +16,9 @@ export enum navigation {
 }
 
 const Container = () => {
+  const [stateUpdateRepUrl, setStateUpdateRepUrl] = useState(false);
+  // add repo_url in task
+  // const [inputRepoUrl, setInputRepoUrl] = useState();
   // calculator
   const [number, setNumber] = useState(0);
   const [holdNumber, setHoldNumber] = useState(0);
@@ -44,23 +47,23 @@ const Container = () => {
         return null
       });
       setTimeHist(tasks);
-      console.log("times all get");
     })();
   },[isActive])
   // timeメモtask
   useEffect(() => {
-      // 即時実行関数でuseEffect内で非同期実装
-      (async () => {
-          const tasks = await invoke<Tasks>("get_all_tasks", {})
-          .catch(err => {
-              console.error(err)
-              return null
-          });
-          setTasks(tasks);
-          setStateAddTask(false);
-          console.log("task get");
+    // 即時実行関数でuseEffect内で非同期実装
+    (async () => {
+      const tasks = await invoke<Tasks>("get_all_tasks", {})
+      .catch(err => {
+        console.error(err)
+        return null
+      });
+      setTasks(tasks);
+      setStateAddTask(false);
+      setStateUpdateRepUrl(false);
+      console.log("task get");
       })();
-  }, [stateAddTask])
+  }, [stateAddTask, stateUpdateRepUrl])
   const  taskChange = (e:  React.ChangeEvent<HTMLSelectElement>) => {
     setTaskId(e.target.value);
   }
@@ -96,7 +99,7 @@ const Container = () => {
     setStart={setStart}
   />);
   const TestContent = (() => <DebugComponent />);
-  const TaskContent = (() => <Task />)
+  const TaskContent = (() => <Task tasks={tasks} setStateUpdate={setStateUpdateRepUrl} />)
 
   return (
     <>

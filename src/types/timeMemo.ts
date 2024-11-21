@@ -14,9 +14,14 @@ export type GetTime = {
 export type Times = {
   times: [GetTime]
 }
+type Project  = {
+  id: number,
+  rep_url: string
+}
 type Task = {
   id: number;
   name: string;
+  projects: [Project]
 }
 export type Tasks = {
   tasks: [Task]

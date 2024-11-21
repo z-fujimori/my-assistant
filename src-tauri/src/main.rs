@@ -5,8 +5,8 @@ use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 use tauri::{Manager, State};
 pub(crate) mod database;
-use crate::database::data;
-use chrono::{DateTime, NaiveDateTime, Local, TimeZone};
+use crate::database::{data, task, time, project};
+use chrono::{NaiveDateTime, Local, TimeZone};
 
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -38,12 +38,19 @@ pub struct InputTask {
 pub struct  GetTask{
   id: i64,
   name: String,
+  projects: Vec<Project>
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Project {
+  id: u32,
+  rep_url: String,
 }
 impl GetTask {
-  pub fn new(id: i64, name: &str) -> Self {
+  pub fn new(id: i64, name: &str, projects: Vec<Project>) -> Self {
     GetTask { 
       id: id, 
       name: name.to_string(), 
+      projects: projects
     }
   }
 }
@@ -51,10 +58,27 @@ impl GetTask {
 pub struct Tasks{
   tasks: Vec<GetTask>,
 }
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UpdateUrl {
+  id: i64,
+  url: String
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetProject {
+  id: i64,
+  task_id: i64,
+  rep_url: String,
+  pull_num: i64
+}
+#[derive(Debug, Serialize, Deserialize)]
+struct  Projects {
+  projects: Vec<GetProject>
+}
+
 
 #[tauri::command]
 async fn get_all_tasks(sqlite_pool: State<'_, sqlx::SqlitePool>) -> Result<Tasks, String> {
-  let tasks = data::get_all_tasks(&sqlite_pool)
+  let tasks = task::get_all_tasks(&sqlite_pool)
     .await
     .map_err(|e| e.to_string())?;
   Ok(Tasks { tasks })
@@ -64,7 +88,7 @@ async fn handle_add_time (
   sqlite_pool: State<'_, sqlx::SqlitePool>,
   time: InputTime
 ) -> Result<(), String> {
-  data::insert_time(&*sqlite_pool, time)
+  time::insert_time(&*sqlite_pool, time)
     .await
     .map_err(|e| e.to_string())?;
 
@@ -75,14 +99,33 @@ async fn handle_add_task (
   sqlite_pool: State<'_, sqlx::SqlitePool>,
   task: InputTask,
 ) ->  Result<(), String> {
-  data::insert_task(&*sqlite_pool, task)
+  task::insert_task(&*sqlite_pool, task)
     .await
     .map_err(|e| e.to_string())?;
   Ok(())
 }
 #[tauri::command]
+async fn update_url (
+  sqlite_pool: State<'_, sqlx::SqlitePool>,
+  data: UpdateUrl
+) -> Result<(), String> {
+  project::update_url(&*sqlite_pool, data)
+  .await
+  .map_err(|e| e.to_string())?;
+Ok(())
+}
+#[tauri::command]
+async fn get_all_projects(
+  sqlite_pool: State<'_, sqlx::SqlitePool>
+) -> Result<Projects, String> {
+  let projects = project::get_all_projects(&*sqlite_pool)
+    .await
+    .map_err(|e| e.to_string())?;
+  Ok(Projects{ projects })
+}
+#[tauri::command]
 async fn get_all_times(sqlite_pool:  State<'_, sqlx::SqlitePool>) -> Result<Times, String> {
-  let times = data::get_all_times(&sqlite_pool)
+  let times = time::get_all_times(&sqlite_pool)
     .await
     .map_err(|e| e.to_string())?;
 
@@ -167,6 +210,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   #[cfg(debug_assertions)]
   if cfg!(debug_assertions) {println!("{}", db_exists);
     block_on(data::show_tables(&sqlite_pool))?;
+    block_on(project::get_all_projects(&sqlite_pool))?;
   }
   
   tauri::Builder::default()
@@ -174,6 +218,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
       handle_add_time,
       get_all_tasks,
       handle_add_task,
+      get_all_projects,
+      update_url,
       get_all_times,
     ])
     // ハンドラからコネクションプールにアクセスできるよう、登録する
