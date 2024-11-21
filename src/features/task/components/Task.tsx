@@ -15,9 +15,9 @@ const Task = (props:{
               <p>{task.name}</p>
               <div className='ml-5'>
               {task.projects.map((pro) => (
-                <InputUrl key={"p" + pro.id} id={pro.id} val={pro.rep_url} setStateUpdate={props.setStateUpdate} />
+                <InputUrl key={"p" + pro.id} id={pro.id} val={pro.rep_url} taskId={task.id} setStateUpdate={props.setStateUpdate} />
               ))}
-              <InputUrl key={"t"+task.id} id={null} val=""  setStateUpdate={props.setStateUpdate} />
+              <InputUrl key={"t"+task.id} id={null} val="" taskId={task.id} setStateUpdate={props.setStateUpdate} />
               </div>
             </div>
           ))

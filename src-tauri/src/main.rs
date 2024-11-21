@@ -64,6 +64,11 @@ pub struct UpdateUrl {
   url: String
 }
 #[derive(Debug, Serialize, Deserialize)]
+pub struct InsertProject {
+  url: String,
+  task_id: i64
+}
+#[derive(Debug, Serialize, Deserialize)]
 pub struct GetProject {
   id: i64,
   task_id: i64,
@@ -100,6 +105,16 @@ async fn handle_add_task (
   task: InputTask,
 ) ->  Result<(), String> {
   task::insert_task(&*sqlite_pool, task)
+    .await
+    .map_err(|e| e.to_string())?;
+  Ok(())
+}
+#[tauri::command]
+async fn insert_project(
+  sqlite_pool: State<'_, sqlx::SqlitePool>,
+  data: InsertProject
+) ->  Result<(), String> {
+  project::insert_project(&*sqlite_pool, data)
     .await
     .map_err(|e| e.to_string())?;
   Ok(())
@@ -220,6 +235,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
       handle_add_task,
       get_all_projects,
       update_url,
+      insert_project,
       get_all_times,
     ])
     // ハンドラからコネクションプールにアクセスできるよう、登録する

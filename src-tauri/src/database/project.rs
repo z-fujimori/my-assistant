@@ -2,7 +2,7 @@ use std::collections::{BTreeMap};
 use futures::TryStreamExt;
 use sqlx::{Row, SqlitePool};
 
-use crate::{GetProject, GetTask, InputTask, Project, UpdateUrl};
+use crate::{GetProject, GetTask, InputTask, InsertProject, Project, UpdateUrl};
 
 type DbResult<T> = Result<T, Box<dyn std::error::Error>>;
 
@@ -20,6 +20,18 @@ pub(crate) async fn get_all_projects(pool: &SqlitePool) -> DbResult<Vec<GetProje
     projects.insert(id, GetProject{id, task_id, rep_url, pull_num});
   }
   Ok(projects.into_iter().map(|(_k, v)| v).collect())
+}
+
+pub(crate) async fn insert_project(pool: &SqlitePool, data: InsertProject) -> DbResult<()> {
+  let mut tx = pool.begin().await?;
+  // 挿入
+  sqlx::query("INSERT INTO projects (rep_url, task_id) VALUES (?, ?)")
+    .bind(data.url)
+    .bind(data.task_id)
+    .execute(&mut *tx)
+    .await?;
+  tx.commit().await?;
+  Ok(())
 }
 
 pub(crate) async fn update_url(pool: &SqlitePool, data: UpdateUrl) -> DbResult<()> {
