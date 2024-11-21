@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { InputTime } from "../TimememoCard";
 
 const Timer = (props:{
-    titleId: string,
+    taskId: string,
     seconds: number, 
 	setSeconds: React.Dispatch<React.SetStateAction<number>>,
 	isActive: boolean,
@@ -41,7 +41,7 @@ const Timer = (props:{
     };
     const pauseTimer = () => {
         const end_t = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
-        postTime(props.start_t, end_t, props.titleId);
+        postTime(props.start_t, end_t, props.taskId);
         props.setStart("");
 
         props.setIsPaused(true);
@@ -55,7 +55,7 @@ const Timer = (props:{
     const stopTimer = () => {
         if (!props.isPaused) {
             const end_t = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
-            postTime(props.start_t, end_t, props.titleId)
+            postTime(props.start_t, end_t, props.taskId)
             props.setStart("");
         }
         props.setIsPaused(false);
@@ -63,9 +63,9 @@ const Timer = (props:{
         props.setSeconds(0);
     };
 
-    const postTime = async (start:string, end:string, title_id: string) => {
+    const postTime = async (start:string, end:string, task_id: string) => {
         let data: InputTime = {
-            title_id: Number(title_id),
+            task_id: Number(task_id),
             start_time: start,
             end_time: end
         }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { navigation } from '../../Container';
+import NavCard from './components/NavCard';
 
 const Swipe = (props:{
   currentPage: navigation ,
@@ -7,6 +8,7 @@ const Swipe = (props:{
   CalContent: () => JSX.Element, 
   TimContent: () => JSX.Element, 
   TestContent: () => JSX.Element, 
+  TaskContent: () => JSX.Element,
 }) => {
   const [posX, setPosX] = useState(0);
   const [startX, setStartX] = useState(0);
@@ -14,7 +16,7 @@ const Swipe = (props:{
 
   // const [currentPage, setCurrentPage] = useState<navigation>(navigation.calc);
   const MOVE_SPEED = 0.1;
-  const navArray = [navigation.calc, navigation.time, navigation.swipe];
+  const navArray = [navigation.calc, navigation.time, navigation.swipe, navigation.task];
 
   console.log("content宣言");
   let Content = props.CalContent;
@@ -22,11 +24,14 @@ const Swipe = (props:{
     case navigation.calc:
       Content = props.CalContent;
       break;
-      case navigation.time:
-        Content = props.TimContent;
-        break;
-        case navigation.swipe:
-          Content = props.TestContent;
+    case navigation.time:
+      Content = props.TimContent;
+      break;
+    case navigation.swipe:
+      Content = props.TestContent;
+      break;
+    case navigation.task:
+      Content = props.TaskContent;
       break;
   }
 
@@ -114,21 +119,13 @@ const Swipe = (props:{
 
   return (
     <div
-      className="m-10"
+      className="m-10 text-gray-300"
     >
-      <div className="m-3">
-      <button
-        className="m-2 p-3 bg-dark" 
-        onClick={()=>props.setCurrentPage(navigation.calc)}
-        >計算機</button>
-      <button 
-        className="m-2 p-3 bg-dark" 
-        onClick={()=>props.setCurrentPage(navigation.time)}
-      >time memo</button>
-      <button 
-        className="m-2 p-3 bg-dark" 
-        onClick={()=>props.setCurrentPage(navigation.swipe)}
-      >デバッグtest</button>
+      <div className="m-3 flex">
+        <NavCard text="電卓" clickIvent={()=>props.setCurrentPage(navigation.calc)} />
+        <NavCard text="timeメモ" clickIvent={()=>props.setCurrentPage(navigation.time)} />
+        <NavCard text="デバッグtest" clickIvent={()=>props.setCurrentPage(navigation.swipe)} />
+        <NavCard text="タスク編集" clickIvent={()=>props.setCurrentPage(navigation.task)} />
       </div>
 
       {/* <CalcuCard /> */}
