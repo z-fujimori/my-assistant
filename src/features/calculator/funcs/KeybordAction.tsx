@@ -26,7 +26,6 @@ export function useKeybind({
   targetRef,
 }: KeybindProps) {
   const onKeyDownLatest = useLatest(onKeyDown);
-  console.log("bord");
 
   useEffect(() => {
     const eventListener = (event: KeyboardEvent) => {

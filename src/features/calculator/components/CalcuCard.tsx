@@ -4,8 +4,9 @@ import SymbolKeyboard from './element/SymbolKeyboard';
 import ResetKeyboard from './element/ResetKeyboard';
 import MemoryNumber from './element/MemoryNumber';
 import React from 'react'
-import { useKeyActions } from '../funcs/CalcKeyAction';
+import { useNumActions, useSymbolActions } from '../funcs/CalcKeyAction';
 import { useKeybind } from '../funcs/KeybordAction';
+import { FaEquals } from 'react-icons/fa';
 
 const CalcuCard = (props:{
   number: number, 
@@ -104,7 +105,8 @@ const CalcuCard = (props:{
     props.setNumber(0);
   }
 
-  useKeyActions(updateNumber); // キーボードからの入力
+  useNumActions(updateNumber); // キーボードからの入力
+  useSymbolActions(calcuFunction, equal, resetOnlyNumber, resetNumber, num_mem_switch); // 記号入力
 
 
   return (
