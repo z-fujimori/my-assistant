@@ -4,6 +4,8 @@ import SymbolKeyboard from './element/SymbolKeyboard';
 import ResetKeyboard from './element/ResetKeyboard';
 import MemoryNumber from './element/MemoryNumber';
 import React from 'react'
+import { useKeyActions } from '../funcs/CalcKeyAction';
+import { useKeybind } from '../funcs/KeybordAction';
 
 const CalcuCard = (props:{
   number: number, 
@@ -101,6 +103,8 @@ const CalcuCard = (props:{
   function resetOnlyNumber(){
     props.setNumber(0);
   }
+
+  useKeyActions(updateNumber); // キーボードからの入力
 
 
   return (
