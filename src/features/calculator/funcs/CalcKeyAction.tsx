@@ -14,7 +14,9 @@ export const useNumActions = (
   useKeybind({
     key: "c",
     shiftKey: false,
-    onKeyDown: () => updateNumber(2),
+    altKey: false,
+    metaKey: false,
+    onKeyDown: () => {console.log("2"); updateNumber(2)},
   });
   useKeybind({
     key: "v",
@@ -159,19 +161,31 @@ export const useSymbolActions = (
     shiftKey: false,
     onKeyDown: () => resetNumber(),
   });
+  useKeybind({
+    key: "ArrowUp",
+    onKeyDown: () => num_mem_switch(1)
+  });
+  useKeybind({
+    key: "ArrowDown",
+    onKeyDown: () => num_mem_switch(2)
+  });
+}
 
+export const useCommandActions = (
+  num_mem_switch: (index: number) => void
+) => {
   useKeybind({
-    key: "x",        // キー「1」を指定
-    ctrlKey: true,   // Controlキーを有効化
-    metaKey: true, // commandキー
+    key: "X",
+    altKey: false,
+    ctrlKey: false,
+    metaKey: true,
     onKeyDown: () => num_mem_switch(1)
   });
   useKeybind({
-    key: "X",        // キー「1」を指定
-    onKeyDown: () => num_mem_switch(1)
-  });
-  useKeybind({
-    key: "C",        // キー「1」を指定
+    key: "c",
+    altKey: false,
+    ctrlKey: false,
+    metaKey: true,
     onKeyDown: () => num_mem_switch(2)
   });
 }

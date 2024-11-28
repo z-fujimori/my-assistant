@@ -17,10 +17,10 @@ function useLatest<T>(value: T) {
 }
 
 export function useKeybind({
-  altKey,
-  ctrlKey,
-  metaKey,
-  shiftKey,
+  altKey, // optionキー ⌥
+  ctrlKey, // controlキー ^
+  metaKey, // commandキー ⌘
+  shiftKey, // shiftキー ⇧
   key,
   onKeyDown,
   targetRef,
@@ -29,6 +29,10 @@ export function useKeybind({
 
   useEffect(() => {
     const eventListener = (event: KeyboardEvent) => {
+      console.log("key, command ", event.key, event.metaKey)
+      if (metaKey && !event.metaKey) {
+        console.log("return");
+      }
       if (altKey && !event.altKey) return;
       if (ctrlKey && !event.ctrlKey) return;
       if (metaKey && !event.metaKey) return;
