@@ -44,4 +44,15 @@ pub(crate) async fn insert_task(pool: &SqlitePool, task: InputTask) -> DbResult<
   Ok(())
 }
 
-
+pub(crate) async fn get_divided_by_day(pool: &SqlitePool) ->  DbResult<()> {
+  let mut tx = pool.begin().await?;
+  let SQL = "";
+  // 挿入
+  sqlx::query("INSERT INTO tasks (name) VALUES (?)")
+    .bind(task.name)
+    .execute(&mut *tx)
+    .await?;
+  // トランザクションをコミット
+  tx.commit().await?;
+  Ok(())
+}
