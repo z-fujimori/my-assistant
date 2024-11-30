@@ -130,6 +130,16 @@ async fn update_url (
 Ok(())
 }
 #[tauri::command]
+async fn delete_project(
+  sqlite_pool: State<'_, sqlx::SqlitePool>,
+  id: i64
+) -> Result<(), String> {
+  project::delete_project(&*sqlite_pool, id)
+  .await
+  .map_err(|e| e.to_string())?;
+Ok(())
+}
+#[tauri::command]
 async fn get_all_projects(
   sqlite_pool: State<'_, sqlx::SqlitePool>
 ) -> Result<Projects, String> {
@@ -144,22 +154,21 @@ async fn get_all_times(sqlite_pool:  State<'_, sqlx::SqlitePool>) -> Result<Time
     .await
     .map_err(|e| e.to_string())?;
 
-  let data:Vec<GetTime> = times.into_iter().map(|mut v| {
-    // `start_time`と`end_time`を`&str`として借用してから`NaiveDateTime`にパース
-    let naive_start_time = NaiveDateTime::parse_from_str(&v.start_time, "%Y/%m/%d %H:%M:%S")
-        .expect("Failed to parse start time");
-    let naive_end_time = NaiveDateTime::parse_from_str(&v.end_time, "%Y/%m/%d %H:%M:%S")
-        .expect("Failed to parse end time");
-    // ローカルタイムゾーンの`DateTime<Local>`に変換
-    let datetime_start = Local.from_utc_datetime(&naive_start_time);
-    let datetime_end = Local.from_utc_datetime(&naive_end_time);
-    // `DateTime`を`String`に変換して保存
-    v.start_time = datetime_start.to_string();
-    v.end_time = datetime_end.to_string();
-    v
-  }).collect();
-
-  Ok(Times { times:data })
+  // let data:Vec<GetTime> = times.into_iter().map(|mut v| {
+  //   // `start_time`と`end_time`を`&str`として借用してから`NaiveDateTime`にパース
+  //   let naive_start_time = NaiveDateTime::parse_from_str(&v.start_time, "%Y/%m/%d %H:%M:%S")
+  //       .expect("Failed to parse start time");
+  //   let naive_end_time = NaiveDateTime::parse_from_str(&v.end_time, "%Y/%m/%d %H:%M:%S")
+  //       .expect("Failed to parse end time");
+  //   // ローカルタイムゾーンの`DateTime<Local>`に変換
+  //   let datetime_start = Local.from_utc_datetime(&naive_start_time);
+  //   let datetime_end = Local.from_utc_datetime(&naive_end_time);
+  //   // `DateTime`を`String`に変換して保存
+  //   v.start_time = datetime_start.to_string();
+  //   v.end_time = datetime_end.to_string();
+  //   v
+  // }).collect();
+  Ok(Times { times:times })
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -235,6 +244,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
       handle_add_task,
       get_all_projects,
       update_url,
+      delete_project,
       insert_project,
       get_all_times,
     ])

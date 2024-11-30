@@ -25,14 +25,16 @@ pub(crate) async fn get_all_times(pool: &SqlitePool) -> DbResult<Vec<GetTime>> {
   Ok(times.into_iter().map(|(_k, v)| v).collect())
 }
 pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime) -> DbResult<()> {
+  let start_time = time.start_time.replace("/", "-");
+  let end_time = time.end_time.replace("/", "-");
   // トランザクションを開始する
   let mut tx = pool.begin().await?;
   // テーブルに挿入
   sqlx::query("INSERT INTO times (task_id, start_time, end_time) VALUES (?, ?, ?)")
     // .bind(time.id)
     .bind(time.task_id)
-    .bind(time.start_time)
-    .bind(time.end_time)
+    .bind(start_time)
+    .bind(end_time)
     .execute(pool)
     .await?;
 

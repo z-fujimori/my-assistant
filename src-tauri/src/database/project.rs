@@ -35,12 +35,22 @@ pub(crate) async fn insert_project(pool: &SqlitePool, data: InsertProject) -> Db
 }
 
 pub(crate) async fn update_url(pool: &SqlitePool, data: UpdateUrl) -> DbResult<()> {
-  println!("url:{}  id:{}", data.url.clone(), data.id.clone());
   let mut tx = pool.begin().await?;
   // 挿入
   sqlx::query("UPDATE projects SET rep_url = (?) WHERE id = (?)")
     .bind(data.url)
     .bind(data.id)
+    .execute(&mut *tx)
+    .await?;
+  tx.commit().await?;
+  Ok(())
+}
+
+pub(crate) async fn delete_project(pool: &SqlitePool, id: i64) ->DbResult<()> {
+  let mut tx = pool.begin().await?;
+  // 挿入
+  sqlx::query("DELETE FROM projects WHERE id = (?)")
+    .bind(id)
     .execute(&mut *tx)
     .await?;
   tx.commit().await?;
