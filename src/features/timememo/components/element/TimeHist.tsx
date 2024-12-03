@@ -1,5 +1,5 @@
-// import React from 'react'
-import {Times} from '../TimememoCard'
+import React from 'react'
+import { Times } from "../../../../types/timeMemo"
 
 export const TimeHist = (
     props: {

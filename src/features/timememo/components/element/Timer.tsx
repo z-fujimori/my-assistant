@@ -2,7 +2,7 @@ import React from 'react'
 
 import { invoke } from "@tauri-apps/api/core";
 import { useEffect } from "react";
-import { InputTime } from "../TimememoCard";
+import { InputTime } from '../../../../types/timeMemo';
 
 const Timer = (props:{
     taskId: string,

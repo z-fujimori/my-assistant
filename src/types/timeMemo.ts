@@ -7,7 +7,7 @@ export type InputTime = {
 export type GetTime = {
   id: number,
   task_id: number,
-  name: string,
+  task: string,
   start_time: string,
   end_time: string
 }

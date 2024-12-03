@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use tauri::{Manager, State};
 pub(crate) mod database;
 use crate::database::{data, task, time, project};
-use chrono::{NaiveDateTime, Local, TimeZone};
+use chrono::{DateTime, Local, NaiveDateTime, TimeZone};
 
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -91,9 +91,14 @@ async fn get_all_tasks(sqlite_pool: State<'_, sqlx::SqlitePool>) -> Result<Tasks
 #[tauri::command]
 async fn handle_add_time (
   sqlite_pool: State<'_, sqlx::SqlitePool>,
-  time: InputTime
+  mut time: InputTime
 ) -> Result<(), String> {
-  time::insert_time(&*sqlite_pool, time)
+  time.start_time = time.start_time.replace("/", "-");
+  time.end_time = time.end_time.replace("/", "-");
+  let start_time = NaiveDateTime::parse_from_str(&time.start_time, "%Y-%m-%d %H:%M:%S").expect("Invalid start_time format");
+  let end_time = NaiveDateTime::parse_from_str(&time.end_time, "%Y-%m-%d %H:%M:%S").expect("Invalid end_time format");
+  let duration = end_time - start_time;
+  time::insert_time(&*sqlite_pool, time, duration.num_seconds())
     .await
     .map_err(|e| e.to_string())?;
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Tasks } from '../../../types/timeMemo'
 import InputUrl from './InputUrl'
+import WeeklyGrass from './WeeklyGrass '
 
 const Task = (props:{
   tasks: Tasks | null,
@@ -14,11 +15,12 @@ const Task = (props:{
             <div key={"task"+task.id} className='m-3'>
               <p>{task.name}</p>
               <div className='ml-5'>
-              {task.projects.map((pro) => (
-                <InputUrl key={"p" + pro.id} id={pro.id} val={pro.rep_url} taskId={task.id} setStateUpdate={props.setStateUpdate} />
-              ))}
-              <InputUrl key={"t"+task.id} id={null} val="" taskId={task.id} setStateUpdate={props.setStateUpdate} />
+                {task.projects.map((pro) => (
+                  <InputUrl key={"p" + pro.id} id={pro.id} val={pro.rep_url} taskId={task.id} setStateUpdate={props.setStateUpdate} />
+                ))}
+                <InputUrl key={"t"+task.id} id={null} val="" taskId={task.id} setStateUpdate={props.setStateUpdate} />
               </div>
+              <WeeklyGrass />
             </div>
           ))
         ) : (
