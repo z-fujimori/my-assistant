@@ -1,8 +1,5 @@
-import React from 'react'
-// import { useForm } from "react-hook-form"
-
+import React, { useState } from 'react'
 import { invoke } from "@tauri-apps/api/core";
-import { useState } from "react";
 
 const InputUrl = (props:{
   id: number|null,
@@ -11,7 +8,7 @@ const InputUrl = (props:{
   setStateUpdate: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [inputUrl, setInputUrl] = useState(props.val);
-  function changeInputUrl (e) {
+  function changeInputUrl (e: any) {
     setInputUrl(e.target.value);
   }
   async function updateButton () {

@@ -55,6 +55,32 @@ impl GetTask {
   }
 }
 #[derive(Debug, Serialize, Deserialize)]
+pub struct GetTasksWithTime {
+  id: i64,
+  name: String,
+  times: Vec<DailyTime>
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct DailyTime {
+  start_date: String,
+  time: i64,
+  additions: i64,
+  deletions: i64
+}
+impl GetTasksWithTime {
+  pub fn new(id: i64, name: &str, times: Vec<DailyTime>) -> Self {
+    GetTasksWithTime {
+      id: id,
+      name: name.to_string(),
+      times: times
+    }
+  }
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetTasksWithTimes {
+  tasks: Vec<GetTasksWithTime>
+}
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Tasks{
   tasks: Vec<GetTask>,
 }
@@ -76,8 +102,13 @@ pub struct GetProject {
   pull_num: i64
 }
 #[derive(Debug, Serialize, Deserialize)]
-struct  Projects {
+struct Projects {
   projects: Vec<GetProject>
+}
+#[derive(Debug, Serialize, Deserialize)]
+struct Period {
+  head_day: String,
+  tail_day: String
 }
 
 
@@ -98,6 +129,8 @@ async fn handle_add_time (
   let start_time = NaiveDateTime::parse_from_str(&time.start_time, "%Y-%m-%d %H:%M:%S").expect("Invalid start_time format");
   let end_time = NaiveDateTime::parse_from_str(&time.end_time, "%Y-%m-%d %H:%M:%S").expect("Invalid end_time format");
   let duration = end_time - start_time;
+  time.start_time = start_time.format("%Y-%m-%d %H:%M:%S").to_string();
+  time.end_time = end_time.format("%Y-%m-%d %H:%M:%S").to_string();
   time::insert_time(&*sqlite_pool, time, duration.num_seconds())
     .await
     .map_err(|e| e.to_string())?;
@@ -154,11 +187,19 @@ async fn get_all_projects(
   Ok(Projects{ projects })
 }
 #[tauri::command]
+async fn get_task_with_time(sqlite_pool: State<'_, sqlx::SqlitePool>, period: Period) -> Result<GetTasksWithTimes, String> {
+  println!("st:{} end:{}", &period.head_day, &period.tail_day);
+  let tasks = task::get_task_with_time(&*sqlite_pool, &period.head_day, &period.tail_day)
+    .await
+    .map_err(|e| e.to_string())?;
+  Ok(GetTasksWithTimes{tasks:tasks})
+}
+#[tauri::command]
 async fn get_all_times(sqlite_pool:  State<'_, sqlx::SqlitePool>) -> Result<Times, String> {
   let times = time::get_all_times(&sqlite_pool)
     .await
     .map_err(|e| e.to_string())?;
-
+// じかん関係の変換
   // let data:Vec<GetTime> = times.into_iter().map(|mut v| {
   //   // `start_time`と`end_time`を`&str`として借用してから`NaiveDateTime`にパース
   //   let naive_start_time = NaiveDateTime::parse_from_str(&v.start_time, "%Y/%m/%d %H:%M:%S")
@@ -252,6 +293,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
       delete_project,
       insert_project,
       get_all_times,
+      get_task_with_time,
     ])
     // ハンドラからコネクションプールにアクセスできるよう、登録する
     .setup(|app| {

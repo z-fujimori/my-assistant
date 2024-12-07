@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import "./App.css"
-import { Times, Tasks } from './types/timeMemo';
+import { Times, Tasks, GetTaskWithTimes } from './types/timeMemo';
 import { invoke } from '@tauri-apps/api/core';
 import Swipe from './features/swipeWindow/Swipe';
 import CalcuCard from './features/calculator/components/CalcuCard';
@@ -67,6 +67,21 @@ const Container = () => {
   const  taskChange = (e:  React.ChangeEvent<HTMLSelectElement>) => {
     setTaskId(e.target.value);
   }
+
+  // stampのweekly task with time
+  const [weeklyTime, setWeeklyTime] = useState<GetTaskWithTimes|null>(null);
+  useEffect(() => {
+    (async () => {
+      console.log("１週間task　st");
+      const tasks = await invoke<GetTaskWithTimes>("get_task_with_time", {"period":{"head_day":"2024-12-01","tail_day":"2024-12-07"}})
+        .catch(err => {
+          console.error(err, "aa")
+          return null
+        });
+      console.log("１週間task",tasks);
+      setWeeklyTime(tasks);
+    })();
+  },[])
   
   // ページ
   const [currentPage, setCurrentPage] = useState<navigation>(navigation.calc);
@@ -99,7 +114,11 @@ const Container = () => {
     setStart={setStart}
   />);
   const TestContent = (() => <DebugComponent />);
-  const TaskContent = (() => <Task tasks={tasks} setStateUpdate={setStateUpdateRepUrl} />)
+  const TaskContent = (() => <Task 
+    tasks={tasks} 
+    setStateUpdate={setStateUpdateRepUrl} 
+    weeklyTime={weeklyTime}
+  />)
 
   return (
     <>

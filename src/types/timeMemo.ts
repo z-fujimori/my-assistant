@@ -26,3 +26,17 @@ type Task = {
 export type Tasks = {
   tasks: [Task]
 }
+export type DaylyTime = {
+  date: string,
+  time: number,
+  additions: number,
+  deletions: number
+}
+export type GetTaskWithTime = {
+  id: number,
+  name: string,
+  times: [DaylyTime]
+}
+export type GetTaskWithTimes = {
+  tasks: [GetTaskWithTime]
+}

@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 
 const Green = () => {
   let color_num = 600;
@@ -7,7 +7,7 @@ const Green = () => {
 
   return (
     <div>
-      <div className="mr-1 p-4 bg-sky-500 rounded-lg opacity-50" ></div>
+      <div className="mr-1 p-4 bg-green-800 rounded-lg opacity-50" ></div>
       <div className={css_class} ></div>
     </div>
   )

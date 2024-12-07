@@ -1,12 +1,18 @@
-import React from 'react'
-import { Tasks } from '../../../types/timeMemo'
+// import React from 'react'
+import { useEffect, useState } from 'react'
+import { GetTaskWithTimes, Tasks } from '../../../types/timeMemo'
 import InputUrl from './InputUrl'
 import WeeklyGrass from './WeeklyGrass '
+import { invoke } from '@tauri-apps/api/core'
 
 const Task = (props:{
   tasks: Tasks | null,
-  setStateUpdate: React.Dispatch<React.SetStateAction<boolean>>
+  setStateUpdate: React.Dispatch<React.SetStateAction<boolean>>,
+  weeklyTime: GetTaskWithTimes | null
 }) => {
+
+  console.log("tasks",props.weeklyTime);
+
   return (
     <div>
       <div>
@@ -20,7 +26,7 @@ const Task = (props:{
                 ))}
                 <InputUrl key={"t"+task.id} id={null} val="" taskId={task.id} setStateUpdate={props.setStateUpdate} />
               </div>
-              <WeeklyGrass />
+              <WeeklyGrass weeklyTime={props.weeklyTime?.tasks[task.id]} id={task.id} />
             </div>
           ))
         ) : (

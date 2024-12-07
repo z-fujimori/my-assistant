@@ -2,7 +2,7 @@ use std::collections::{BTreeMap};
 use futures::TryStreamExt;
 use sqlx::{Row, SqlitePool};
 
-use crate::{GetTask, InputTask, Project, UpdateUrl};
+use crate::{DailyTime, GetTask, GetTasksWithTime, InputTask, Project, UpdateUrl};
 
 type DbResult<T> = Result<T, Box<dyn std::error::Error>>;
 
@@ -44,15 +44,14 @@ pub(crate) async fn insert_task(pool: &SqlitePool, task: InputTask) -> DbResult<
   Ok(())
 }
 
-pub(crate) async fn get_all_7day(pool: &SqlitePool, head_day: &str, tail_day: &str) ->  DbResult<()> {
-  let mut tx = pool.begin().await?;
-  let SQL:&str = "
-    SELECT id, name, COALESCE( 
+pub(crate) async fn get_task_with_time(pool: &SqlitePool, head_day: &str, tail_day: &str) ->  DbResult<Vec<GetTasksWithTime>> {
+  let sql_query = format!(
+    "SELECT id, name, COALESCE( 
       (SELECT json_group_array(json_object(
         'start_date', start_date,
         'time', total_time,
         'additions', total_add,
-        'deletions', 	total_del))
+        'deletions', total_del))
       FROM (
         SELECT 
           *, 
@@ -62,17 +61,24 @@ pub(crate) async fn get_all_7day(pool: &SqlitePool, head_day: &str, tail_day: &s
           SUM(deletions) as total_del 
         FROM times 
         WHERE tasks.id = times.task_id 
-        AND DATE(?) >= start_date 
-        AND DATE(?) < start_date 
-        GROUP BY start_date ORDER BY start_date))),
+        AND DATE('{}') < start_date 
+        AND DATE('{}') >= start_date 
+        GROUP BY start_date ORDER BY start_date)),
       '[]'
-    ) AS time_7day FROM tasks;";
-  sqlx::query(SQL)
-    .bind(head_day)
-    .bind(tail_day)
-    .execute(&mut *tx)
-    .await?;
-  // トランザクションをコミット
-  tx.commit().await?;
-  Ok(())
+    ) AS time_7day FROM tasks;",
+    head_day, tail_day
+  );
+  println!("{}",sql_query);
+  let mut rows = sqlx::query(&sql_query).fetch(pool);
+  let mut tasks = BTreeMap::new();
+
+
+  while let Some(row) = rows.try_next().await? {
+    let id: i64 = row.try_get("id")?;
+    let name: &str = row.try_get("name")?;
+    let times: Vec<DailyTime> = serde_json::from_str(row.try_get("time_7day")?)?;
+    println!("{:?}",times);
+    tasks.insert(id, GetTasksWithTime::new(id, name, times));
+  }
+  Ok(tasks.into_iter().map(|(_k, v)| v).collect())
 }
