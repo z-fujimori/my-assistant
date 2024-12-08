@@ -18,4 +18,4 @@ This template should help get you started developing with Tauri, React and Types
 - data不足のバリデーション
 ### 全体
 - スライドにリセットをかけて無限に動かないようにする
-- 
+- windowの最小サイズを定義

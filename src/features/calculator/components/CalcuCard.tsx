@@ -5,8 +5,6 @@ import ResetKeyboard from './element/ResetKeyboard';
 import MemoryNumber from './element/MemoryNumber';
 import React from 'react'
 import { useCommandActions, useNumActions, useSymbolActions } from '../funcs/CalcKeyAction';
-import { useKeybind } from '../funcs/KeybordAction';
-import { FaEquals } from 'react-icons/fa';
 
 const CalcuCard = (props:{
   number: number, 

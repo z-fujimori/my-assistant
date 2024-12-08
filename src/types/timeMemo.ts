@@ -7,7 +7,7 @@ export type InputTime = {
 export type GetTime = {
   id: number,
   task_id: number,
-  name: string,
+  task: string,
   start_time: string,
   end_time: string
 }
@@ -25,4 +25,18 @@ type Task = {
 }
 export type Tasks = {
   tasks: [Task]
+}
+export type DaylyTime = {
+  start_date: string,
+  time: number,
+  additions: number,
+  deletions: number
+}
+export type GetTaskWithTime = {
+  id: number,
+  name: string,
+  times: [DaylyTime]
+}
+export type GetTaskWithTimes = {
+  tasks: [GetTaskWithTime]
 }
