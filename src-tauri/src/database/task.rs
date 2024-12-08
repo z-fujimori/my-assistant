@@ -68,7 +68,7 @@ pub(crate) async fn get_task_with_time(pool: &SqlitePool, head_day: &str, tail_d
     ) AS time_7day FROM tasks;",
     head_day, tail_day
   );
-  println!("{}",sql_query);
+  // println!("{}",sql_query);
   let mut rows = sqlx::query(&sql_query).fetch(pool);
   let mut tasks = BTreeMap::new();
 

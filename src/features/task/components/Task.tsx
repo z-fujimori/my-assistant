@@ -1,9 +1,7 @@
-// import React from 'react'
-import { useEffect, useState } from 'react'
+import React from 'react'
 import { GetTaskWithTimes, Tasks } from '../../../types/timeMemo'
 import InputUrl from './InputUrl'
 import WeeklyGrass from './WeeklyGrass '
-import { invoke } from '@tauri-apps/api/core'
 
 const Task = (props:{
   tasks: Tasks | null,
@@ -11,7 +9,7 @@ const Task = (props:{
   weeklyTime: GetTaskWithTimes | null
 }) => {
 
-  console.log("tasks",props.weeklyTime);
+  console.log("task.tsx",props.weeklyTime);
 
   return (
     <div>

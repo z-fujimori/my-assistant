@@ -73,7 +73,7 @@ const Container = () => {
   useEffect(() => {
     (async () => {
       console.log("１週間task　st");
-      const tasks = await invoke<GetTaskWithTimes>("get_task_with_time", {"period":{"head_day":"2024-12-01","tail_day":"2024-12-07"}})
+      const tasks = await invoke<GetTaskWithTimes>("get_task_with_time", {"period":{"head_day":"2024-12-02","tail_day":"2024-12-08"}})
         .catch(err => {
           console.error(err, "aa")
           return null
@@ -81,7 +81,7 @@ const Container = () => {
       console.log("１週間task",tasks);
       setWeeklyTime(tasks);
     })();
-  },[])
+  },[isActive])
   
   // ページ
   const [currentPage, setCurrentPage] = useState<navigation>(navigation.calc);

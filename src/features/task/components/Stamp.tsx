@@ -3,27 +3,31 @@ import { DaylyTime, GetTaskWithTime } from '../../../types/timeMemo'
 import NilStamp from './stamps/NilStamp';
 import ShallowStapm from './stamps/ShallowStapm';
 import MiddleStapm from './stamps/MiddleStapm';
+import DeepStamp from './stamps/DeepStamp';
 
 const Stamp = (props:{
-  dayleTime: DaylyTime,
+  dayleTime: DaylyTime|undefined,
+  date: string,
+  taskId: number
 }) => {
-  const timeValue = (props.dayleTime.time ? props.dayleTime.time : 0);
+  const timeValue = (props.dayleTime?.start_date ? props.dayleTime.time : 0);
 
-  let StampComponent;
+  let StampComponent: ()=>JSX.Element;
   if (timeValue == 0) {
-    StampComponent = <NilStamp />
+    StampComponent = (() => (<NilStamp />))
   } else if (timeValue < 10800) { // 3時間以内
-    StampComponent = <ShallowStapm />
+    StampComponent = (() => <ShallowStapm />)
   } else if (timeValue < 21600) { // // 6時間以内
-    StampComponent = <MiddleStapm />
+    StampComponent = (() => <MiddleStapm />)
   } else {
-    StampComponent = <MiddleStapm />
+    StampComponent = (() => <DeepStamp />)
   }
 
-  return (
-    <>
 
-    </>
+  return (
+    <div>
+      <StampComponent />
+    </div>
   )
 }
 

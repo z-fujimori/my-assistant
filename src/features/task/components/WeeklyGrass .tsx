@@ -1,10 +1,5 @@
-// import React from 'react'
-import DeepStamp from './stamps/DeepStamp'
-import Green from './Green'
-import MiddleStapm from './stamps/MiddleStapm'
-import NilStamp from './stamps/NilStamp'
-import ShallowStapm from './stamps/ShallowStapm'
-import { GetTaskWithTime, GetTaskWithTimes } from '../../../types/timeMemo'
+import React from 'react'
+import { DaylyTime, GetTaskWithTime, GetTaskWithTimes } from '../../../types/timeMemo'
 import Stamp from './Stamp'
 
 const WeeklyGrass  = (props:{
@@ -27,15 +22,20 @@ const WeeklyGrass  = (props:{
     }
     return dates;
   }
-  console.log(getNext7Days());
+  // [check]
+  // 呼び出し方を後々変える
+  getNext7Days();
 
   return (
     <>
-      <div className='flex'>
+      <div key={"weeklytask"+props.id} className='flex'>
         {dates.map((date) => (
-          <Stamp dayleTime={
-            props.weeklyTime.times.find((item)=>item.date == date) || {date: date, time: 0, additions: 0, deletions: 0}
-          }/>
+          <Stamp key={`stamp-${props.id}-${date}`} 
+            dayleTime={
+              props.weeklyTime?.times.find((item)=>item.start_date == date) || {start_date: date, time: 0, additions: 0, deletions: 0}} 
+            date={date} 
+            taskId={props.id}
+          />
         ))}
       </div>
     </>

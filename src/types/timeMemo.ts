@@ -27,7 +27,7 @@ export type Tasks = {
   tasks: [Task]
 }
 export type DaylyTime = {
-  date: string,
+  start_date: string,
   time: number,
   additions: number,
   deletions: number
