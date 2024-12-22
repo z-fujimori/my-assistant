@@ -72,7 +72,7 @@ impl GetTasksWithTime {
     GetTasksWithTime {
       id: id,
       name: name.to_string(),
-      times: times
+      times: times, // 7dayの日毎の時間
     }
   }
 }
@@ -80,9 +80,23 @@ impl GetTasksWithTime {
 pub struct GetTasksWithTimes {
   tasks: Vec<GetTasksWithTime>
 }
+impl DailyTime {
+  pub fn new(start_date: String, time: i64, additions: i64, deletions: i64) -> Self {
+    DailyTime {
+      start_date: start_date,
+      time: time,
+      additions: additions,
+      deletions: deletions,
+    }
+  }
+}
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Tasks{
   tasks: Vec<GetTask>,
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct  DailyTimes {
+  times: Vec<DailyTime>,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UpdateUrl {
@@ -195,6 +209,13 @@ async fn get_task_with_time(sqlite_pool: State<'_, sqlx::SqlitePool>, period: Pe
   Ok(GetTasksWithTimes{tasks:tasks})
 }
 #[tauri::command]
+async fn get_daily_time(sqlite_pool: State<'_, sqlx::SqlitePool>, period: Period) -> Result<DailyTimes, String> {
+  let times = time::get_daily_time(&*sqlite_pool, &period.head_day, &period.tail_day)
+    .await
+    .map_err(|e| e.to_string())?;
+  Ok(DailyTimes{times: times})
+}
+#[tauri::command]
 async fn get_all_times(sqlite_pool:  State<'_, sqlx::SqlitePool>) -> Result<Times, String> {
   let times = time::get_all_times(&sqlite_pool)
     .await
@@ -294,6 +315,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
       insert_project,
       get_all_times,
       get_task_with_time,
+      get_daily_time,
     ])
     // ハンドラからコネクションプールにアクセスできるよう、登録する
     .setup(|app| {

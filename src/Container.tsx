@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import "./App.css"
-import { Times, Tasks, GetTaskWithTimes } from './types/timeMemo';
+import { Times, Tasks, GetTaskWithTimes, DaylyTimes } from './types/timeMemo';
 import { invoke } from '@tauri-apps/api/core';
 import Swipe from './features/swipeWindow/Swipe';
 import CalcuCard from './features/calculator/components/CalcuCard';
@@ -68,18 +68,35 @@ const Container = () => {
     setTaskId(e.target.value);
   }
 
+  function calculateDate(date: Date, days: number): string {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days); // 日数を加算（負数で減算）
+    const year = result.getFullYear();
+    const month = String(result.getMonth() + 1).padStart(2, "0");
+    const day = String(result.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+  const today = new Date();
+
   // stampのweekly task with time
   const [weeklyTime, setWeeklyTime] = useState<GetTaskWithTimes|null>(null);
+  const [dailyTimes, setDailyTimes] = useState<DaylyTimes|null>(null);
   useEffect(() => {
     (async () => {
       console.log("１週間task　st");
-      const tasks = await invoke<GetTaskWithTimes>("get_task_with_time", {"period":{"head_day":"2024-12-02","tail_day":"2024-12-08"}})
+      const tasks = await invoke<GetTaskWithTimes>("get_task_with_time", {"period":{"head_day":calculateDate(today, -7),"tail_day":calculateDate(today, 0)}})
         .catch(err => {
-          console.error(err, "aa")
+          console.error(err, "エラー発生container.tsx")
           return null
         });
       console.log("１週間task",tasks);
       setWeeklyTime(tasks);
+      const times = await invoke<DaylyTimes>("get_daily_time", {"period":{"head_day":calculateDate(today, -60),"tail_day":calculateDate(today, 0)}})
+        .catch(err => {
+          console.error(err, "エラー発生container.tsx")
+          return null
+        });
+      setDailyTimes(times);
     })();
   },[isActive])
   
