@@ -1,8 +1,7 @@
-use std::collections::BTreeMap;
-use crate::{GetTime, InputTime};
+use std::{collections::BTreeMap, ops::Add};
+use crate::{DailyTime, GetTime, InputTime};
 use futures::TryStreamExt;
 use sqlx::{Row, SqlitePool};
-use chrono::TimeDelta;
 
 type DbResult<T> = Result<T, Box<dyn std::error::Error>>;
 
@@ -41,4 +40,31 @@ pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime, work_time: i
   // トランザクションをコミットする
   tx.commit().await?;
   Ok(())
+}
+
+pub(crate) async fn get_daily_time(pool: &SqlitePool, head_day: &str, tail_day: &str) -> DbResult<Vec<DailyTime>> {
+  let sql_query = format!(
+    "SELECT 
+      DATE(start_time) as start_date, 
+      SUM(work_time) as total_time, 
+      SUM(additions) as total_add, 
+      SUM(deletions) as total_del 
+      FROM times 
+      WHERE DATE('{}') < start_date 
+      AND DATE('{}') >= start_date 
+      GROUP BY start_date ORDER BY start_date;",
+      head_day, tail_day
+  );
+  let mut rows = sqlx::query(&sql_query).fetch(pool);
+  let mut times = vec![];
+
+  while let Some(row) = rows.try_next().await? {
+    let day: String = row.try_get("start_date")?;
+    let time: i64 = row.try_get("total_time")?;
+    let add: i64 = row.try_get("total_add")?;
+    let del: i64 = row.try_get("total_del")?;
+    // times.insert(DailyTime::new(day, time, add, del));
+    times.push(DailyTime::new(day, time, add, del));
+  }
+  Ok(times)
 }

@@ -32,6 +32,9 @@ export type DaylyTime = {
   additions: number,
   deletions: number
 }
+export type DaylyTimes = {
+  times: [DaylyTime]
+}
 export type GetTaskWithTime = {
   id: number,
   name: string,
