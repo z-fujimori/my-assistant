@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { DaylyTime, GetTaskWithTime } from '../../../types/timeMemo'
 import NilStamp from './stamps/NilStamp';
 import ShallowStapm from './stamps/ShallowStapm';
 import MiddleStapm from './stamps/MiddleStapm';
 import DeepStamp from './stamps/DeepStamp';
-import StapmHoverWindow from './stamps/StapmHoverWindow';
 
 const Stamp = (props:{
   dayleTime: DaylyTime|undefined,
@@ -81,8 +80,10 @@ const Stamp = (props:{
           <div
             // onMouseEnter={handleMouseEnter}
             // onMouseLeave={handleMouseLeave} 
-            className='absolute z-10 w-32 p-2 -mt-5 -mr-5 translate-x-2 bg-gray-800 rounded-lg shadow-md border border-gray-200'>
-            <div className="text-gray-200"><p>03:45:59</p></div>
+            className='absolute z-10 w-40 p-2 -mt-5 -mr-5 translate-x-2 bg-gray-800 rounded-lg shadow-md border border-gray-200'>
+            <div className="text-gray-200">
+              <span className='text-gray-500'>{props.date}:</span> {props.dayleTime?.time}min
+            </div>
           </div>
         : <></>}
       </div>

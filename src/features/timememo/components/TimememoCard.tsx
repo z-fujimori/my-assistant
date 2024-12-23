@@ -4,7 +4,8 @@ import AddTaskModal from './element/AddTaskModal';
 import { TimeHist } from "./element/TimeHist";
 import Task from "./element/Task";
 import Timer from "./element/Timer";
-import { Tasks, Times } from '../../../types/timeMemo';
+import { DaylyTimes, Tasks, Times } from '../../../types/timeMemo';
+import TimeStamp from './element/TimeStamp';
 
 const TimememoCard = (props:{
 	timeHist: Times | null,
@@ -22,6 +23,9 @@ const TimememoCard = (props:{
 	setIsPaused: React.Dispatch<React.SetStateAction<boolean>>,
 	start_t: string,
 	setStart: React.Dispatch<React.SetStateAction<string>>,
+	dailyTime: DaylyTimes|null,
+	head_day: string,
+	tail_day: string
 }) => {
 	// modal
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,6 +49,7 @@ const TimememoCard = (props:{
 					start_t={props.start_t}
 					setStart={props.setStart}
 				/>
+				<TimeStamp dailyTime={props.dailyTime} head_day={props.head_day} tail_day={props.tail_day} />
 				<TimeHist timeHist={props.timeHist} setTimeHist={props.setTimeHist} />
 			</div>
 		</div>
