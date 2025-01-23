@@ -11,14 +11,14 @@ const Swipe = (props:{
   TaskContent: () => JSX.Element,
 }) => {
   const [posX, setPosX] = useState(0);
-  const [startX, setStartX] = useState(0);
   const [page, setPage] = useState(0);
+  const [pageChangeing, setPageChangeing] = useState(false);
 
   // const [currentPage, setCurrentPage] = useState<navigation>(navigation.calc);
   const MOVE_SPEED = 0.1;
   const navArray = [navigation.calc, navigation.time, navigation.swipe, navigation.task];
+  let scrollTimeout: number; // スクロール終了イベント
 
-  console.log("content宣言");
   let Content = props.CalContent;
   switch (props.currentPage) {
     case navigation.calc:
@@ -37,7 +37,6 @@ const Swipe = (props:{
 
   function resetSwipe () {
     setPosX(0);
-    setStartX(0);
   }
 
   function move_right_page() {
@@ -52,6 +51,7 @@ const Swipe = (props:{
     props.setCurrentPage(navArray[next_page])
   }
   function move_left_page() {
+    console.log("posX",posX);
     let next_page;
     if (page <= 0) {
       next_page = navArray.length-1;
@@ -64,58 +64,76 @@ const Swipe = (props:{
   }
 
   useEffect(() => {
-    console.log("effect");
-    if (posX > 149) {
-      console.log("左へ",posX);
-      resetSwipe();
-      props.setCurrentPage(navigation.time);
-      move_left_page();
-    } else if (posX < -149) {
-      console.log("右へ",posX);
-      resetSwipe();
-      props.setCurrentPage(navigation.time);
-      move_right_page();
+    // const render = () => {
+    //   const transformValue = `translate3D(${posX}px)`;
+    //   console.log(transformValue);
+    // };
+
+    const c100 = async (x: number) => {
+      if (x > 99) {console.log("100よりでかい")}
+      else if (x < -99) {console.log("-100より小さい")}
+      await setPosX(0);
     }
-    
-    const render = () => {
-      const transformValue = `translate3D(${posX}px)`;
-      console.log(transformValue);
-    };
 
     // Handle wheel events for scaling and translating
     const handleWheel = (e:any) => {
       e.preventDefault();
+      
       setPosX((prevPosX) => {
-        const newPosX = prevPosX - e.deltaX * MOVE_SPEED;
+        if (-100 <= prevPosX || prevPosX <= 100 ){
+          console.log("pre",prevPosX);
+          const newPosX = prevPosX - e.deltaX * MOVE_SPEED;
+          return newPosX;
+        } else {
+          return prevPosX;
+        }
+        // console.log("new",newPosX);
+        // console.log("");
         // posX が MAX_POS_X を超えないように制限
-        return newPosX;
       });
-      render();
+      
+
+      // c100(posX);
+      
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        console.log('Scroll ended!', posX);
+        setPosX(0);
+      }, 15); // OOms間イベントが発生しなければスクロール終了と判定
+      // render();
     };
 
-    // Handle gesturechange event
-    const handleGestureChange = (e:any) => {
-      e.preventDefault();
-      setPosX((_prevPosX) => {
-        const newPosX = e.pageX - startX;
-        // posX が MAX_POS_X を超えないように制限
-        return newPosX;
-      });
-      render();
-    };
+
 
     // Add event listeners
     window.addEventListener('wheel', handleWheel);
-    // window.addEventListener('gesturestart', handleGestureStart);
-    window.addEventListener('gesturechange', handleGestureChange);
 
     // Cleanup on unmount
     return () => {
       window.removeEventListener('wheel', handleWheel);
-      // window.removeEventListener('gesturestart', handleGestureStart);
-      window.removeEventListener('gesturechange', handleGestureChange);
     };
-  }, [posX, startX]);
+  }, []);
+
+  useEffect(()=>{
+    // const changePage = async () => {
+
+    // }
+    if (!pageChangeing){
+      setPageChangeing(true);
+      if (posX > 100) {
+        console.log("左へ",posX);
+        setPosX(0);
+        props.setCurrentPage(navigation.time);
+        move_left_page();
+      } else if (posX < -100) {
+        console.log("右へ",posX);
+        setPosX(0);
+        props.setCurrentPage(navigation.time);
+        move_right_page();
+      }
+      setPageChangeing(false);
+    }
+  },[posX])
 
   return (
     <div
@@ -138,7 +156,6 @@ const Swipe = (props:{
 
       <div className='mt-3'>
         <p>posX   : {posX}</p>
-        <p>startX : {startX}</p>
       </div>
     </div>
   )
