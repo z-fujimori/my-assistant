@@ -6,6 +6,9 @@ body {
     user-select: none; /* テキストを選択不可に */
     cursor: pointer; /* カーソルをデフォルトに設定 */
     cursor: default; /* カーソルが　I にならないようにする */
+   
+
+    
 }
 
 @layer base {

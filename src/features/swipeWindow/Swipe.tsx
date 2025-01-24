@@ -35,10 +35,6 @@ const Swipe = (props:{
       break;
   }
 
-  function resetSwipe () {
-    setPosX(0);
-  }
-
   function move_right_page() {
     let next_page;
     if (page >= navArray.length-1) {
@@ -77,11 +73,12 @@ const Swipe = (props:{
 
     // Handle wheel events for scaling and translating
     const handleWheel = (e:any) => {
-      e.preventDefault();
+      // e.preventDefault(); // デフォルトのスクロール挙動を無効化
+    
       
       setPosX((prevPosX) => {
         if (-100 <= prevPosX || prevPosX <= 100 ){
-          console.log("pre",prevPosX);
+          // console.log("pre",prevPosX);
           const newPosX = prevPosX - e.deltaX * MOVE_SPEED;
           return newPosX;
         } else {
@@ -97,16 +94,17 @@ const Swipe = (props:{
       
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
-        console.log('Scroll ended!', posX);
+        console.log('Scroll ended!', e);
         setPosX(0);
-      }, 15); // OOms間イベントが発生しなければスクロール終了と判定
+
+      }, 20); // OOms間イベントが発生しなければスクロール終了と判定
       // render();
     };
 
 
 
     // Add event listeners
-    window.addEventListener('wheel', handleWheel);
+    window.addEventListener('wheel', handleWheel, { passive: false });
 
     // Cleanup on unmount
     return () => {
@@ -115,30 +113,46 @@ const Swipe = (props:{
   }, []);
 
   useEffect(()=>{
-    // const changePage = async () => {
+    let isMounted = true; // マウント状態を追跡
 
-    // }
-    if (!pageChangeing){
-      setPageChangeing(true);
-      if (posX > 100) {
-        console.log("左へ",posX);
-        setPosX(0);
-        props.setCurrentPage(navigation.time);
-        move_left_page();
-      } else if (posX < -100) {
-        console.log("右へ",posX);
-        setPosX(0);
-        props.setCurrentPage(navigation.time);
-        move_right_page();
+    const changePage = async () => {
+      if (!pageChangeing) {
+        setPageChangeing(true);
+
+        if (posX > 100) {
+            console.log("左へ", posX);
+            setPosX(0);
+            props.setCurrentPage(navigation.time);
+            move_left_page();
+        } else if (posX < -100) {
+            console.log("右へ", posX);
+            setPosX(0);
+            props.setCurrentPage(navigation.time);
+            move_right_page();
+        }
+
+        if (isMounted) {
+            setPageChangeing(false); // コンポーネントがマウント中の場合のみ状態を更新
+        }
       }
-      setPageChangeing(false);
-    }
+    };
+
+    changePage();
+
+    return () => {
+        isMounted = false; // クリーンアップ時にフラグをリセット
+    };
   },[posX])
 
   return (
     <div
       className="m-10 text-gray-300"
     >
+
+      <div className='mt-3'>
+        <p>posX   : {posX}</p>
+      </div>
+      
       <div className="m-3 flex">
         <NavCard text="電卓" clickIvent={()=>props.setCurrentPage(navigation.calc)} />
         <NavCard text="timeメモ" clickIvent={()=>props.setCurrentPage(navigation.time)} />
@@ -154,9 +168,6 @@ const Swipe = (props:{
         <TimContent />
       )} */}
 
-      <div className='mt-3'>
-        <p>posX   : {posX}</p>
-      </div>
     </div>
   )
 }
