@@ -113,7 +113,7 @@ pub struct GetProject {
   id: i64,
   task_id: i64,
   rep_url: String,
-  pull_num: i64
+  last_date: String
 }
 #[derive(Debug, Serialize, Deserialize)]
 struct Projects {
