@@ -27,9 +27,16 @@ CREATE TABLE IF NOT EXISTS categories_tasks(
 CREATE TABLE IF NOT EXISTS projects (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   rep_url TEXT,
-  pull_num INTEGER DEFAULT 0,
+  last_date INTEGER DEFAULT TEXT,
   task_id INTEGER NOT NULL,
   FOREIGN KEY (task_id) REFERENCES tasks (id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS branches (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT,
+  is_working boolean,
+  project_id INTEGER NOT NULL,
+  FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
 );
 -- CREATE TABLE IF NOT EXISTS tiers (
 --   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,3 +82,6 @@ INSERT INTO times (id, task_id, start_time, end_time, work_time, additions, dele
 INSERT INTO times (id, task_id, start_time, end_time, work_time, additions, deletions) VALUES (2, 1, '2024-10-27 19:00:00', '2024-10-27 21:00:00', 7200, 11, 61);
 INSERT INTO times (id, task_id, start_time, end_time, work_time, additions, deletions) VALUES (3, 0, '2024-10-27 22:30:00', '2024-10-27 23:30:00', 3600, 50, 10);
 INSERT INTO times (id, task_id, start_time, end_time, work_time, additions, deletions) VALUES (4, 0, '2024-12-05 23:30:00', '2024-12-05 23:45:00', 900, 50, 10);
+INSERT INTO branches (id, name, is_working, project_id) VALUES (0, 'main', true, 0);
+INSERT INTO branches (id, name, is_working, project_id) VALUES (1, 'dev_2', true, 0);
+INSERT INTO branches (id, name, is_working, project_id) VALUES (2, 'dev_1', false, 0);

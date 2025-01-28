@@ -61,7 +61,7 @@ const Container = () => {
       setTasks(tasks);
       setStateAddTask(false);
       setStateUpdateRepUrl(false);
-      console.log("task get");
+      // console.log("task get");
       })();
   }, [stateAddTask, stateUpdateRepUrl])
   const  taskChange = (e:  React.ChangeEvent<HTMLSelectElement>) => {
@@ -77,9 +77,9 @@ const Container = () => {
     return `${year}-${month}-${day}`;
   }
   const today = new Date();
-  console.log("today:  ",today);
+  // console.log("today:  ",today);
   const format_today = calculateDate(today, 0);
-  console.log("format_today:  ",format_today);
+  // console.log("format_today:  ",format_today);
   const format_7day_ago = calculateDate(today, -7);
   const format_60day_ago = calculateDate(today, -7*9);
 
@@ -88,13 +88,13 @@ const Container = () => {
   const [dailyTimes, setDailyTimes] = useState<DaylyTimes|null>(null);
   useEffect(() => {
     (async () => {
-      console.log("１週間task　st");
+      // console.log("１週間task　st");
       const tasks = await invoke<GetTaskWithTimes>("get_task_with_time", {"period":{"head_day":format_7day_ago,"tail_day":format_today}})
         .catch(err => {
           console.error(err, "エラー発生container.tsx")
           return null
         });
-      console.log("１週間task",tasks);
+      // console.log("１週間task",tasks);
       setWeeklyTime(tasks);
       const times = await invoke<DaylyTimes>("get_daily_time", {"period":{"head_day":format_60day_ago,"tail_day":format_today}})
         .catch(err => {

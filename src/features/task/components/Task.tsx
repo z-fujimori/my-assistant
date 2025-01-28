@@ -9,7 +9,7 @@ const Task = (props:{
   weeklyTime: GetTaskWithTimes | null
 }) => {
 
-  console.log("task.tsx",props.weeklyTime);
+  // console.log("task.tsx",props.weeklyTime);
 
   return (
     <div>
