@@ -31,7 +31,6 @@ pub(crate) async fn get_all_tasks(pool: &SqlitePool) -> DbResult<Vec<GetTask>> {
 }
 
 pub(crate) async fn insert_task(pool: &SqlitePool, task: InputTask) -> DbResult<()> {
-  println!("{:?}",task);
   // トランザクションを開始する
   let mut tx = pool.begin().await?;
   // 挿入
@@ -68,7 +67,6 @@ pub(crate) async fn get_task_with_time(pool: &SqlitePool, head_day: &str, tail_d
     ) AS time_7day FROM tasks;",
     head_day, tail_day
   );
-  // println!("{}",sql_query);
   let mut rows = sqlx::query(&sql_query).fetch(pool);
   let mut tasks = BTreeMap::new();
 
@@ -77,7 +75,6 @@ pub(crate) async fn get_task_with_time(pool: &SqlitePool, head_day: &str, tail_d
     let id: i64 = row.try_get("id")?;
     let name: &str = row.try_get("name")?;
     let times: Vec<DailyTime> = serde_json::from_str(row.try_get("time_7day")?)?;
-    println!("{:?}",times);
     tasks.insert(id, GetTasksWithTime::new(id, name, times));
   }
   Ok(tasks.into_iter().map(|(_k, v)| v).collect())

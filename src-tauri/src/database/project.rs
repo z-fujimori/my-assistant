@@ -23,7 +23,7 @@ pub struct ProjectWithBranch {
   task_id: i64,
   rep_url: String,
   last_date: String,
-  branches: Vec<Branch>
+  pub branches: Vec<Branch>
 }
 impl ProjectWithBranch {
   pub fn new(  id: i64, task_id: i64, rep_url: String, last_date: String, branches: Vec<Branch>) -> Self {
