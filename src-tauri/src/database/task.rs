@@ -79,3 +79,4 @@ pub(crate) async fn get_task_with_time(pool: &SqlitePool, head_day: &str, tail_d
   }
   Ok(tasks.into_iter().map(|(_k, v)| v).collect())
 }
+

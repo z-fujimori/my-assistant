@@ -116,3 +116,18 @@ pub(crate) async fn delete_project(pool: &SqlitePool, id: i64) ->DbResult<()> {
   tx.commit().await?;
   Ok(())
 }
+
+pub(crate) async fn get_project_belongs_time(poop: &SqlitePool, task_id: i64) ->DbResult<()> {
+  const SQL: &str = "SELECT * from projects";
+  let mut rows = sqlx::query(SQL).fetch(pool);
+  let mut projects = BTreeMap::new();
+  while let Some(row) = rows.try_next().await? {
+    let id:i64 = row.try_get("id")?;
+    let task_id: i64 = row.try_get("task_id")?;
+    let rep_url: String = row.try_get("rep_url")?;
+    let last_date: String = row.try_get("last_date")?;
+
+    projects.insert(id, GetProject{id, task_id, rep_url, last_date});
+  }
+  Ok(projects.into_iter().map(|(_k, v)| v).collect())
+}
