@@ -117,9 +117,9 @@ pub(crate) async fn delete_project(pool: &SqlitePool, id: i64) ->DbResult<()> {
   Ok(())
 }
 
-pub(crate) async fn get_project_belongs_time(poop: &SqlitePool, task_id: i64) ->DbResult<()> {
-  const SQL: &str = "SELECT * from projects";
-  let mut rows = sqlx::query(SQL).fetch(pool);
+pub(crate) async fn get_project_belongs_time(pool: &SqlitePool, task_id: i64) ->DbResult<(Vec<GetProject>)> {
+  let SQL = format!("SELECT * from projects where task_id = {}",task_id);
+  let mut rows = sqlx::query(&SQL).fetch(pool);
   let mut projects = BTreeMap::new();
   while let Some(row) = rows.try_next().await? {
     let id:i64 = row.try_get("id")?;
