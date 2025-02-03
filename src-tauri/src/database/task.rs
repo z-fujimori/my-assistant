@@ -2,7 +2,7 @@ use std::collections::{BTreeMap};
 use futures::TryStreamExt;
 use sqlx::{Row, SqlitePool};
 
-use crate::{database::project::get_project, DailyTime, GetTask, GetTasksWithTime, InputTask, Project, UpdateUrl};
+use crate::{DailyTime, GetTask, GetTasksWithTime, InputTask, Project};
 
 type DbResult<T> = Result<T, Box<dyn std::error::Error>>;
 
