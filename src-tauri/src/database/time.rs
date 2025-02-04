@@ -1,5 +1,5 @@
-use std::{collections::BTreeMap, ops::Add};
-use crate::{database::project::get_project, DailyTime, GetTime, InputTime};
+use std::{collections::BTreeMap};
+use crate::{database::{github, project}, DailyTime, GetTime, InputTime};
 use futures::TryStreamExt;
 use sqlx::{Row, SqlitePool};
 
@@ -37,7 +37,8 @@ pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime, work_time: i
     .execute(pool)
     .await?;
 
-  println!("ProjectWithBranch {:?}", get_project(pool, 0).await?);
+  github::check_code_changes(pool, time.task_id).await?;
+
   // トランザクションをコミットする
   tx.commit().await?;
   Ok(())

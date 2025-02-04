@@ -1,9 +1,10 @@
 use std::collections::{BTreeMap};
+use anyhow::Result;
 use futures::TryStreamExt;
 use serde::{Deserialize, Serialize};
 use sqlx::{Row, SqlitePool};
 
-use crate::{GetProject, GetTask, InputTask, InsertProject, Project, UpdateUrl};
+use crate::{GetProject, InsertProject, UpdateUrl};
 
 type DbResult<T> = Result<T, Box<dyn std::error::Error>>;
 
@@ -23,7 +24,7 @@ pub struct ProjectWithBranch {
   task_id: i64,
   rep_url: String,
   last_date: String,
-  branches: Vec<Branch>
+  pub branches: Vec<Branch>
 }
 impl ProjectWithBranch {
   pub fn new(  id: i64, task_id: i64, rep_url: String, last_date: String, branches: Vec<Branch>) -> Self {
@@ -52,7 +53,7 @@ pub(crate) async fn get_all_projects(pool: &SqlitePool) -> DbResult<Vec<GetProje
   Ok(projects.into_iter().map(|(_k, v)| v).collect())
 }
 
-pub(crate)  async fn get_project(pool: &SqlitePool, project_id: i64) -> DbResult<ProjectWithBranch> {
+pub(crate)  async fn get_project_with_branches(pool: &SqlitePool, project_id: i64) -> Result<ProjectWithBranch> {
   let sql_query = format!(
     "SELECT *, COALESCE(
       (
@@ -115,4 +116,19 @@ pub(crate) async fn delete_project(pool: &SqlitePool, id: i64) ->DbResult<()> {
     .await?;
   tx.commit().await?;
   Ok(())
+}
+
+pub(crate) async fn get_project_belongs_task(pool: &SqlitePool, task_id: i64) -> Result<Vec<GetProject>> {
+  let SQL = format!("SELECT * from projects where task_id = {}",task_id);
+  let mut rows = sqlx::query(&SQL).fetch(pool);
+  let mut projects = BTreeMap::new();
+  while let Some(row) = rows.try_next().await? {
+    let id:i64 = row.try_get("id")?;
+    let task_id: i64 = row.try_get("task_id")?;
+    let rep_url: String = row.try_get("rep_url")?;
+    let last_date: String = row.try_get("last_date")?;
+
+    projects.insert(id, GetProject{id, task_id, rep_url, last_date});
+  }
+  Ok(projects.into_iter().map(|(_k, v)| v).collect())
 }
