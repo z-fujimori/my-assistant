@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS categories_tasks(
 CREATE TABLE IF NOT EXISTS projects (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   rep_url TEXT,
-  last_date INTEGER DEFAULT TEXT,
+  last_date TEXT,
   task_id INTEGER NOT NULL,
   FOREIGN KEY (task_id) REFERENCES tasks (id) ON DELETE CASCADE
 );
@@ -66,8 +66,8 @@ INSERT INTO categories_tasks (categorie_id, task_id) VALUES (0, 1);
 INSERT INTO categories_tasks (categorie_id, task_id) VALUES (0, 2);
 INSERT INTO categories_tasks (categorie_id, task_id) VALUES (1, 0);
 INSERT INTO categories_tasks (categorie_id, task_id) VALUES (2, 2);
-INSERT INTO projects (id, rep_url, task_id) VALUES (0, "https://github.com/z-fujimori/rust_book_keisenki_5", 1);
-INSERT INTO projects (id, rep_url, task_id) VALUES (1, "https://github.com/z-fujimori/rust_book_library_7", 1);
+INSERT INTO projects (id, rep_url, task_id, last_date) VALUES (0, "https://github.com/z-fujimori/rust_book_keisenki_5", 1, '2020-10-24 08:00:00');
+INSERT INTO projects (id, rep_url, task_id, last_date) VALUES (1, "https://github.com/z-fujimori/rust_book_library_7", 1, '2020-10-24 08:00:00');
 -- INSERT INTO tiers (id, num, upper_lim) VALUES (0, 0, true);
 -- INSERT INTO tiers (id, num, upper_lim) VALUES (1, 1, true);
 -- INSERT INTO tiers (id, num, upper_lim) VALUES (2, 2, true);

@@ -24,6 +24,7 @@ pub(crate) async fn get_all_times(pool: &SqlitePool) -> DbResult<Vec<GetTime>> {
   }
   Ok(times.into_iter().map(|(_k, v)| v).collect())
 }
+
 pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime, work_time: i64) -> DbResult<()> {
   // トランザクションを開始する
   let mut tx = pool.begin().await?;
@@ -37,11 +38,13 @@ pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime, work_time: i
     .execute(pool)
     .await?;
 
-  github::check_code_changes(pool, time.task_id).await?;
+  let code_status = github::check_code_changes(pool, time.task_id).await?;
+  println!("コード変更点 {:?}",code_status);
 
   // トランザクションをコミットする
   tx.commit().await?;
   Ok(())
+
 }
 
 pub(crate) async fn get_daily_time(pool: &SqlitePool, head_day: &str, tail_day: &str) -> DbResult<Vec<DailyTime>> {
