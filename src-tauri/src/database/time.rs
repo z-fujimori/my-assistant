@@ -26,20 +26,27 @@ pub(crate) async fn get_all_times(pool: &SqlitePool) -> DbResult<Vec<GetTime>> {
 }
 
 pub(crate) async fn insert_time(pool: &SqlitePool, time: InputTime, work_time: i64) -> DbResult<()> {
+  // コードの変更を取得
+  let code_status = github::check_code_changes(pool, time.task_id).await?;
+  // println!("コード変更点 {:?}", &code_status);
+
+  let add = code_status.additions;
+  let del = code_status.deletions;
+
   // トランザクションを開始する
   let mut tx = pool.begin().await?;
   // テーブルに挿入
-  sqlx::query("INSERT INTO times (task_id, start_time, end_time, work_time) VALUES (?, ?, ?, ?)")
+  sqlx::query("INSERT INTO times (task_id, start_time, end_time, work_time, additions, deletions) VALUES (?, ?, ?, ?, ?, ?)")
     // .bind(time.id)
     .bind(time.task_id)
     .bind(time.start_time)
     .bind(time.end_time)
     .bind(work_time)
+    .bind(add)
+    .bind(del)
     .execute(pool)
     .await?;
 
-  let code_status = github::check_code_changes(pool, time.task_id).await?;
-  println!("コード変更点 {:?}",code_status);
 
   // トランザクションをコミットする
   tx.commit().await?;

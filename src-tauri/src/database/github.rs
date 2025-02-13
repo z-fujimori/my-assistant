@@ -42,8 +42,8 @@ pub struct Branch {
 #[derive(Deserialize, Debug)]
 pub struct CommitCodeDiff {
 	total: i64,
-	additions: i64,
-	deletions: i64
+	pub additions: i64,
+	pub deletions: i64
 }
 #[derive(Deserialize, Debug)]
 pub struct CommitStats {
@@ -56,7 +56,6 @@ pub(crate) async fn check_code_changes(pool: &SqlitePool, task_id: i64) -> Resul
 	let mut total_code_chanses = CommitCodeDiff{total: 0, additions: 0, deletions: 0};
 	// let mut last_date: String;
 	for project in &projects {
-		println!("url {}",project.rep_url);
 		let parts: Vec<&str> = project.rep_url.split('/').collect();
 		if let (Some(owner), Some(repo)) = (parts.get(3), parts.get(4)) {
 			// *** projectテーブルから取得
@@ -64,12 +63,11 @@ pub(crate) async fn check_code_changes(pool: &SqlitePool, task_id: i64) -> Resul
 			let naive_dt = NaiveDateTime::parse_from_str(&prev_date, "%Y-%m-%d %H:%M:%S").expect("Failed to parse date");  // NaiveDateTimeに変換
 			let utc_dt = Utc.from_utc_datetime(&naive_dt);  // UTCに変換
 			let mut last_date = utc_dt.to_rfc3339_opts(chrono::SecondsFormat::Secs, true);
+			println!("{}, {}, {}",last_date, owner, repo);
 			let branches = get_activ_branch(owner.to_string(), repo.to_string(), pool, project.id).await?;
-			if branches.len() == 1 && branches[0].name == "main" {
-				
-			}
-			// println!("b: {:?}",branches);
-			let mut total_code_chanses = CommitCodeDiff{total: 0, additions: 0, deletions: 0};
+			// if branches.len() == 1 && branches[0].name == "main" {
+			println!("アクティブブランチ {:?}",branches);
+			// }
 			for b in branches {
 				let (commit_stats, branch_last_date) = get_commit_info(owner.to_string(), repo.to_string(), b.name.clone(), utc_dt.clone()).await?;
 				println!("{}: {:?}", b.name, commit_stats);
@@ -95,7 +93,6 @@ pub(crate) async fn check_code_changes(pool: &SqlitePool, task_id: i64) -> Resul
 }
 
 pub(crate) async fn get_activ_branch(owner:String, repo:String,pool: &SqlitePool, project_id: i64) -> Result<Vec<BranchInfo>> {
-	println!("\nok\n");
 	let client = Client::new();
 	let url = format!("https://api.github.com/repos/{}/{}/branches", owner, repo);
 	let response = client
@@ -103,15 +100,14 @@ pub(crate) async fn get_activ_branch(owner:String, repo:String,pool: &SqlitePool
 		.header(reqwest::header::USER_AGENT, "my-tauri-app")
 		// .query(&[("sha", "task_control")])
 		.send()
-		.await?;
-	let mut api_resps: Vec<BranchInfo> = response.json().await?;
+		.await;
+	let mut api_resps: Vec<BranchInfo> = response?.json().await?;
+	// println!("{:?}",branches);
 	let branches = get_branches(pool, project_id).await?;
-
 	for branch in branches.iter().filter(|b| !b.is_working) {
 		api_resps.retain(|b| b.name != branch.branch_name );
 	}
-
-  Ok(api_resps)
+	Ok(api_resps)
 }
 
 pub(crate) async fn get_branches(pool: &SqlitePool, project_id: i64) -> Result<Vec<Branch>> {
@@ -149,7 +145,7 @@ pub(crate) async fn get_commit_info(owner:String, repo:String, branch: String, p
 	let commit_datas: Vec<CommitData> = api_resps
 		.iter()
 		.filter(|res| res.commit.committer.date.clone().parse::<DateTime<Utc>>().expect("Invalid date format") > previous_date )
-		.filter(|res| res.commit.committer.name != "GitHub" )
+		.filter(|res| res.commit.committer.name == "GitHub" )
 		.map(|res| CommitData{sha: res.sha.clone(), date: res.commit.committer.date.clone()})
 		.collect();
 	println!("コミット情報 {:?}", commit_datas);
@@ -157,6 +153,7 @@ pub(crate) async fn get_commit_info(owner:String, repo:String, branch: String, p
 	let mut return_stats = CommitCodeDiff{total: 0, additions: 0, deletions: 0};
 	let mut last_date = prev_date;
 	for c in commit_datas {
+		println!("APIリクエスト(commit_status){} {} {}", owner, repo, c.sha);
 		let url = format!("https://api.github.com/repos/{}/{}/commits/{}", owner, repo, c.sha);
 		let commit_response = client
 			.get(url)
